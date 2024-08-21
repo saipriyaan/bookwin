@@ -3,51 +3,60 @@
 {% block title %}Place Order{% endblock %}
 
 {% block content %}
-<h2>Place a New Order</h2>
-<form method="POST" enctype="multipart/form-data">
-    <div style="margin-bottom: 15px;">
-        <label for="hd_picture">Upload HD Picture:</label><br>
-        <input type="file" id="hd_picture" name="hd_picture" accept="image/*" required>
-    </div>
-    <div style="margin-bottom: 15px;">
-        <label>
-            <input type="checkbox" id="include_pet" name="include_pet" onclick="togglePetPicture()"> Include Pet Picture
-        </label>
-    </div>
-    <div style="margin-bottom: 15px; display: none;" id="pet_picture_div">
-        <label for="animal_picture">Upload Pet Picture:</label><br>
-        <input type="file" id="animal_picture" name="animal_picture" accept="image/*">
-    </div>
-    <div style="margin-bottom: 15px;">
-        <label for="gender">Gender:</label><br>
-        <input type="radio" id="male" name="gender" value="male"> Male
-        <input type="radio" id="female" name="gender" value="female"> Female
-    </div>
-    <div style="margin-bottom: 15px;">
-        <label for="name">Name:</label><br>
-        <input type="text" id="name" name="name" required>
-    </div>
-    <div style="margin-bottom: 15px;">
-        <label for="message_to_designer">Message to Designer:</label><br>
-        <textarea id="message_to_designer" name="message_to_designer" rows="4" cols="50"></textarea>
-    </div>
-    <div style="margin-bottom: 15px;">
-        <label for="style">Style:</label><br>
-        <select id="style" name="style">
-            <option value="realistic">Realistic</option>
-            <option value="cartoon">Cartoon</option>
-            <option value="abstract">Abstract</option>
-        </select>
-    </div>
-    <div>
-        <button type="submit">Place Order</button>
-    </div>
-</form>
+<div style="max-width: 600px; margin: 20px auto; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); background-color: #fff;">
+    <h2 style="text-align: center; margin-bottom: 20px;">Place a New Order</h2>
+    <form method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column;">
+        <div style="margin-bottom: 15px;">
+            <label for="hd_picture" style="font-weight: bold;">Upload HD Picture:</label>
+            <input type="file" id="hd_picture" name="hd_picture" accept="image/*" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label style="font-weight: bold;">
+                <input type="checkbox" id="include_pet" name="include_pet" onclick="togglePetPicture()" style="margin-right: 5px;"> Include Pet Picture
+            </label>
+        </div>
+        <div style="margin-bottom: 15px; display: none;" id="pet_picture_div">
+            <label for="animal_picture" style="font-weight: bold;">Upload Pet Picture:</label>
+            <input type="file" id="animal_picture" name="animal_picture" accept="image/*" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label for="gender" style="font-weight: bold;">Gender:</label><br>
+            <input type="radio" id="male" name="gender" value="male" style="margin-right: 5px;"> Male
+            <input type="radio" id="female" name="gender" value="female" style="margin-right: 5px;"> Female
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label for="name" style="font-weight: bold;">Name:</label>
+            <input type="text" id="name" placeholder="Text to be Added to Image" name="name" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+       
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label for="message_to_designer" style="font-weight: bold;">Message to Designer:</label>
+            <textarea id="message_to_designer" name="message_to_designer" rows="4" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"></textarea>
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label for="style" style="font-weight: bold;">Style:</label>
+            <select id="style" name="style" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                <option value="creative">Creative</option>
+                <option value="cinematic">Cinematic</option>
+                <option value="comic">Comic</option>
+                <option value="realistic">Realistic</option>
+                <option value="disney">Disney</option>
+                <option value="lineart">Lineart</option>
+                <option value="designers_touch">Designer’s Touch</option>
+            </select>
+        </div>
+        <div>
+            <button type="submit" style="width: 100%; padding: 10px; border: none; border-radius: 4px; background-color: #2196F3; color: white; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">
+                Place Order
+            </button>
+        </div>
+    </form>
+</div>
 <script>
     function togglePetPicture() {
         var checkBox = document.getElementById("include_pet");
         var petPictureDiv = document.getElementById("pet_picture_div");
-        if (checkBox.checked == true){
+        if (checkBox.checked) {
             petPictureDiv.style.display = "block";
         } else {
             petPictureDiv.style.display = "none";
