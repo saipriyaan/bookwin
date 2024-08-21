@@ -36,7 +36,7 @@ def signup():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+        hashed_password = password
         users_collection.insert_one({"username": username, "password": hashed_password, "role": "client"})
         flash('Account created successfully. Please log in.', 'success')
         return redirect(url_for('login'))
@@ -48,7 +48,7 @@ def login():
         username = request.form['username']
         password = request.form['password']
         user = users_collection.find_one({"username": username})
-        if user and bcrypt.check_password_hash(user['password'], password):
+        if user and user['password']== password:
             user_obj = User(str(user["_id"]), user['username'], user['role'])
             login_user(user_obj)
             flash('Logged in successfully.', 'success')
