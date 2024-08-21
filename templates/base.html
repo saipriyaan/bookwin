@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Online Drawing Business{% endblock %}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e0f7fa;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.5s ease;
+        }
+        header {
+            background:  rgb(48, 172, 238);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(255, 0, 0, 0.2);
+            transition: background 0.5s ease;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        nav {
+            background: #2196F3;
+            padding: 15px;
+            text-align: center;
+            transition: background 0.5s ease;
+        }
+        nav a {
+            color: white;
+            margin: 0 20px;
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        nav a:hover {
+            color: #ffeb3b;
+            transform: scale(1.1);
+        }
+        .container {
+            width: 80%;
+            margin: 30px auto;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
+        .container:hover {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px);
+        }
+        .alert {
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            color: white;
+            transition: opacity 0.5s ease, transform 0.3s ease;
+            transform: scale(1);
+        }
+        .alert-success {
+            background: #4caf50;
+        }
+        .alert-danger {
+            background: #f44336;
+        }
+        .alert:hover {
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Online Drawing Business</h1>
+    </header>
+    <nav>
+        {% if current_user.is_authenticated %}
+            {% if current_user.role != 'client' %}
+                <a href="{{ url_for('admin_facilitator_dashboard') }}">Admin/Facilitator Dashboard</a>
+            {% endif %}
+            <a href="{{ url_for('client_dashboard') }}">Client Dashboard</a>
+            <a href="{{ url_for('place_order') }}">Place Order</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        {% else %}
+            <a href="{{ url_for('signup') }}">Sign Up</a>
+            <a href="{{ url_for('login') }}">Login</a>
+        {% endif %}
+    </nav>
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

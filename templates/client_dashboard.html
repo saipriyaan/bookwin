@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Client Dashboard{% endblock %}
+
+{% block content %}
+<h2>Client Dashboard</h2>
+<h3>Your Orders</h3>
+<ul style="list-style-type: none; padding: 0;">
+    {% for order in orders %}
+    <li style="margin-bottom: 20px; padding: 15px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+        <div style="padding: 15px; border-radius: 8px; background-color: {% if order['status'] == 'completed' %}#4caf50{% elif order['status'] == 'in_progress' %}#f5f5f5{% elif order['status'] == 'pending' %}#2196f3{% else %}#f44336{% endif %}; color: {% if order['status'] == 'completed' or order['status'] == 'rejected' %}white{% else %}black{% endif %};">
+            <p><strong>Order ID:</strong> {{ order['_id'] }}</p>
+            <p><strong>Name:</strong> {{ order['name'] }}</p>
+            <p><strong>Gender:</strong> {{ order['gender'] }}</p>
+            <p><strong>Style:</strong> {{ order['style'] }}</p>
+            <p><strong>Message to Designer:</strong> {{ order['message_to_designer'] }}</p>
+            <p><strong>Status:</strong> {{ order['status'] }}</p>
+            {% if order['rejection_message'] %}
+            <p><strong>Rejection Message:</strong> {{ order['rejection_message'] }}</p>
+            {% endif %}
+
+            <div style="margin-top: 10px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span style="font-size: 12px; color: #999;">Pending</span>
+                    <span style="font-size: 12px; color: #999;">In Progress</span>
+                    <span style="font-size: 12px; color: #999;">Completed</span>
+                    <span style="font-size: 12px; color: #999;">Rejected</span>
+                </div>
+                <div style="position: relative; height: 8px; background-color: #ddd; border-radius: 4px;">
+                    <div style="height: 100%; width: {% if order['status'] == 'completed' %}100%{% elif order['status'] == 'in_progress' %}33%{% elif order['status'] == 'pending' %}0%{% else %}0%{% endif %}; background-color: #2196f3; border-radius: 4px; transition: width 0.3s ease;"></div>
+                </div>
+            </div>
+
+            <p><strong>HD Picture:</strong></p>
+            <img src="{{ url_for('display_image', order_id=order['_id'], image_type='hd_picture') }}" alt="HD Picture" style="max-width: 300px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+            {% if order['pet_picture'] %}
+            <p><strong>Pet Picture:</strong></p>
+            <img src="{{ url_for('display_image', order_id=order['_id'], image_type='pet_picture') }}" alt="Pet Picture" style="max-width: 300px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+            {% endif %}
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

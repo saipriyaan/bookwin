@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Place Order{% endblock %}
+
+{% block content %}
+<h2>Place a New Order</h2>
+<form method="POST" enctype="multipart/form-data">
+    <div style="margin-bottom: 15px;">
+        <label for="hd_picture">Upload HD Picture:</label><br>
+        <input type="file" id="hd_picture" name="hd_picture" accept="image/*" required>
+    </div>
+    <div style="margin-bottom: 15px;">
+        <label>
+            <input type="checkbox" id="include_pet" name="include_pet" onclick="togglePetPicture()"> Include Pet Picture
+        </label>
+    </div>
+    <div style="margin-bottom: 15px; display: none;" id="pet_picture_div">
+        <label for="animal_picture">Upload Pet Picture:</label><br>
+        <input type="file" id="animal_picture" name="animal_picture" accept="image/*">
+    </div>
+    <div style="margin-bottom: 15px;">
+        <label for="gender">Gender:</label><br>
+        <input type="radio" id="male" name="gender" value="male"> Male
+        <input type="radio" id="female" name="gender" value="female"> Female
+    </div>
+    <div style="margin-bottom: 15px;">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name" required>
+    </div>
+    <div style="margin-bottom: 15px;">
+        <label for="message_to_designer">Message to Designer:</label><br>
+        <textarea id="message_to_designer" name="message_to_designer" rows="4" cols="50"></textarea>
+    </div>
+    <div style="margin-bottom: 15px;">
+        <label for="style">Style:</label><br>
+        <select id="style" name="style">
+            <option value="realistic">Realistic</option>
+            <option value="cartoon">Cartoon</option>
+            <option value="abstract">Abstract</option>
+        </select>
+    </div>
+    <div>
+        <button type="submit">Place Order</button>
+    </div>
+</form>
+<script>
+    function togglePetPicture() {
+        var checkBox = document.getElementById("include_pet");
+        var petPictureDiv = document.getElementById("pet_picture_div");
+        if (checkBox.checked == true){
+            petPictureDiv.style.display = "block";
+        } else {
+            petPictureDiv.style.display = "none";
+        }
+    }
+</script>
+{% endblock %}

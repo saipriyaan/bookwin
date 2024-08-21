@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin/Facilitator Dashboard{% endblock %}
+
+{% block content %}
+<h2>Admin/Facilitator Dashboard</h2>
+<h3>All Orders</h3>
+<ul>
+    {% for order in orders %}
+    <li>
+        <p><strong>Order ID:</strong> {{ order['_id'] }}</p>
+        <p><strong>Name:</strong> {{ order['name'] }}</p>
+        <p><strong>Gender:</strong> {{ order['gender'] }}</p>
+        <p><strong>Style:</strong> {{ order['style'] }}</p>
+        <p><strong>Message to Designer:</strong> {{ order['message_to_designer'] }}</p>
+        <p><strong>Status:</strong> {{ order['status'] }}</p>
+        {% if order['rejection_message'] %}
+        <p><strong>Rejection Message:</strong> {{ order['rejection_message'] }}</p>
+        {% endif %}
+        <p><strong>HD Picture:</strong></p>
+        <img src="{{ url_for('display_image', order_id=order['_id'], image_type='hd_picture') }}" alt="HD Picture" style="max-width: 300px;">
+        {% if order['pet_picture'] %}
+        <p><strong>Pet Picture:</strong></p>
+        <img src="{{ url_for('display_image', order_id=order['_id'], image_type='pet_picture') }}" alt="Pet Picture" style="max-width: 300px;">
+        {% endif %}
+        
+        <form method="POST" action="{{ url_for('update_order', order_id=order['_id']) }}">
+            <label for="status">Update Status:</label>
+            <select name="status">
+                <option value="pending" {% if order['status'] == 'pending' %}selected{% endif %}>Pending</option>
+                <option value="in_progress" {% if order['status'] == 'in_progress' %}selected{% endif %}>In Progress</option>
+                <option value="completed" {% if order['status'] == 'in_progress' %}selected{% endif %}>Completed</option>
+            </select>
+            <button type="submit">Update</button>
+        </form>
+        
+        <form method="POST" action="{{ url_for('reject_order', order_id=order['_id']) }}">
+            <label for="rejection_message">Rejection Message:</label><br>
+            <textarea name="rejection_message" rows="4" cols="50">{{ order['rejection_message'] }}</textarea><br>
+            <button type="submit">Reject Order</button>
+        </form>
+
+        <form method="POST" enctype="multipart/form-data" action="{{ url_for('reupload_image', order_id=order['_id']) }}">
+            <label for="new_image">Reupload Image:</label>
+            <input type="file" name="new_image" accept="image/*"><br>
+            <button type="submit">Reupload</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
