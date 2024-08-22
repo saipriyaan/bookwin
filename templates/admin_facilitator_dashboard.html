@@ -8,6 +8,7 @@
 <ul>
     {% for order in orders %}
     <li>
+        <a href="{{ url_for('chat', order_id=order['_id']) }}">Chat</a>
         <p><strong>Order ID:</strong> {{ order['_id'] }}</p>
         <p><strong>Name:</strong> {{ order['name'] }}</p>
         <p><strong>Gender:</strong> {{ order['gender'] }}</p>

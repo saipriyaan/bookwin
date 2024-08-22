@@ -92,7 +92,7 @@
         {% endif %}
     </nav>
     <div class="container">
-        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% with messages = get_flashed_messages(with_categories=True) %}
             {% if messages %}
                 {% for category, message in messages %}
                     <div class="alert alert-{{ category }}">{{ message }}</div>

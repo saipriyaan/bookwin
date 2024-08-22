@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Chat{% endblock %}
+
+
+{% block content %}
+<h2>Chat for Order {{ order['_id'] }}</h2>
+<div style="max-width: 600px; margin: 20px auto; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); background-color: #fff;">
+    <div style="max-height: 400px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px; background-color: #f5f5f5;">
+        {% for chat in chats %}
+        <div style="margin-bottom: 10px; padding: 10px; border-radius: 4px; background-color: {% if chat['user_id'] == current_user.id %}#2196F3{% else %}#f5f5f5{% endif %}; color: {% if chat['user_id'] == current_user.id %}white{% else %}black{% endif %};">
+            <p><strong>{{ chat['username'] }}:</strong> {{ chat['message'] }}</p>
+            <p style="font-size: 12px; color: #999;">{{ chat['timestamp'].strftime('%Y-%m-%d %H:%M:%S') }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    <form method="POST" style="display: flex; flex-direction: column;">
+        <div style="margin-bottom: 15px;">
+            <textarea name="message" rows="4" placeholder="Type your message here..." style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"></textarea>
+        </div>
+        <button type="submit" style="width: 100%; padding: 10px; border: none; border-radius: 4px; background-color: #2196F3; color: white; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">
+            Send
+        </button>
+    </form>
+</div>
+
+<script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+<script>
+    const socket = io();
+
+    // Handle incoming messages
+    socket.on('message', function(data) {
+        const chatContainer = document.querySelector('div[style*="max-height"]');
+        const messageElement = document.createElement('div');
+        messageElement.style.marginBottom = '10px';
+        messageElement.style.padding = '10px';
+        messageElement.style.borderRadius = '4px';
+        messageElement.style.backgroundColor = data.user_id === '{{ current_user.id }}' ? '#2196F3' : '#f5f5f5';
+        messageElement.style.color = data.user_id === '{{ current_user.id }}' ? 'white' : 'black';
+        messageElement.innerHTML = `<p><strong>${data.user_id}:</strong> ${data.message}</p>
+                                    <p style="font-size: 12px; color: #999;">${data.timestamp}</p>`;
+        chatContainer.appendChild(messageElement);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    });
+
+    // Send message on form submit
+    document.querySelector('form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const message = document.querySelector('textarea[name="message"]').value;
+        socket.emit('message', { order_id: '{{ order['_id'] }}', message: message });
+        document.querySelector('textarea[name="message"]').value = '';
+    });
+</script>
+{% endblock %}
