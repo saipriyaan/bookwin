@@ -5,3 +5,4 @@ WTForms
 flask-login 
 flask-bcrypt
 flask-socketio
+Flask-Mail

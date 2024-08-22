@@ -18,6 +18,17 @@ db = client['drawing_business']
 users_collection = db['users']
 orders_collection = db['orders']
 chats_collection = db['chats']
+from flask_mail import Mail, Message
+
+# Configure Flask-Mail
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USERNAME'] = "expenditure.cob@gmail.com"
+app.config['MAIL_PASSWORD'] = "hrhdkdiwwzungmjz"
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+mail = Mail(app)
+
 
 class User(UserMixin):
     def __init__(self, user_id, username, role):
@@ -105,6 +116,7 @@ def place_order():
                 "hd_picture": hd_picture.read(),
                 "pet_picture": animal_picture.read() if animal_picture else None,
                 "gender": gender,
+                "username":current_user.username,
                 "name": name,
                 "message_to_designer": message_to_designer,
                 "style": style,
@@ -180,7 +192,6 @@ def display_image(order_id, image_type):
         )
     flash('Image not found.', 'danger')
     return redirect(url_for('index'))
-
 @app.route('/chat/<order_id>', methods=['GET', 'POST'])
 @login_required
 def chat(order_id):
@@ -196,6 +207,38 @@ def chat(order_id):
             }
             chats_collection.insert_one(chat_data)
             flash('Message sent.', 'success')
+
+            # Fetch the order document to get the uploaded_by ID
+            order = orders_collection.find_one({"_id": ObjectId(order_id)})
+            if order:
+                client_email = order.get('username')  # Assuming this is the client email
+                admin_email = 'expenditure.cob@gmail.com'
+                uploaded_by_id = order.get('uploaded_by')
+                
+                # Convert uploaded_by_id to ObjectId if needed
+                uploaded_by_id = ObjectId(uploaded_by_id) if isinstance(uploaded_by_id, str) else uploaded_by_id
+
+                # Print debugging information
+                print(f"Sender ID: {current_user.id}, Uploaded By ID: {uploaded_by_id}")
+                
+                # Send email notification to the client if the sender is not the client
+                if current_user.id != uploaded_by_id:
+                    if current_user.username != client_email:
+                        msg = Message('New Message in Your Order Chat',
+                                      sender='expenditure.cob@gmail.com',
+                                      recipients=[client_email])
+                        msg.body = f"New message from {current_user.username}:\n\n{message}"
+                        mail.send(msg)
+                        print(f"Sent email to client: {client_email}")
+
+                # Send email notification to the admin
+                if current_user.id != uploaded_by_id:
+                    admin_msg = Message('New Message in Order Chat',
+                                        sender='expenditure.cob@gmail.com',
+                                        recipients=[admin_email])
+                    admin_msg.body = f"New message in order {order_id} from {current_user.username}:\n\n{message}"
+                    mail.send(admin_msg)
+                    print(f"Sent email to admin: {admin_email}")
     
     # Fetch messages for the order
     chats = chats_collection.find({"order_id": ObjectId(order_id)}).sort("timestamp", 1)
@@ -208,6 +251,9 @@ def chat(order_id):
         })
     
     return render_template('chat.html', order_id=order_id, messages=messages)
+
+
+
 
 @app.route('/fetch_messages/<order_id>', methods=['GET'])
 @login_required
@@ -226,6 +272,21 @@ def fetch_messages(order_id):
 @app.route('/')
 def index():
     return render_template('index.html')
+
+
+from flask_mail import Mail, Message
+
+# Existing Flask-Mail configuration here
+
+def send_email(subject, recipient, body):
+    msg = Message(subject, recipients=[recipient], body=body, sender="expenditure.cob@gmail.com")
+    try:
+        mail.send(msg)
+        print(f"Email sent to {recipient}")
+    except Exception as e:
+        print(f"Error sending email: {e}")
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
