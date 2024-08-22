@@ -1,9 +1,8 @@
-from flask import Flask, render_template, redirect, url_for, flash, request, send_file
+from flask import Flask, render_template, redirect, url_for, flash, request, send_file, jsonify
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_bcrypt import Bcrypt
 from pymongo import MongoClient
 from bson.objectid import ObjectId
-from flask_socketio import SocketIO, emit
 import io
 from datetime import datetime
 
@@ -12,9 +11,6 @@ app.secret_key = 'your_secret_key'
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
-
-# Initialize SocketIO
-socketio = SocketIO(app)
 
 # MongoDB Atlas Connection
 client = MongoClient("mongodb+srv://sai:8778386853@cluster0.9vhjs.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
@@ -53,7 +49,7 @@ def login():
         username = request.form['username']
         password = request.form['password']
         user = users_collection.find_one({"username": username})
-        if user and user['password']== password:
+        if user and user['password']==password:
             user_obj = User(str(user["_id"]), user['username'], user['role'])
             login_user(user_obj)
             flash('Logged in successfully.', 'success')
@@ -78,7 +74,6 @@ def client_dashboard():
         flash('Access denied.', 'danger')
         return redirect(url_for('index'))
     orders = list(orders_collection.find({"uploaded_by": ObjectId(current_user.id)}))
-
     return render_template('client_dashboard.html', orders=orders)
 
 @app.route('/admin_facilitator_dashboard')
@@ -117,7 +112,7 @@ def place_order():
                 "rejection_message": "",
                 "uploaded_by": ObjectId(current_user.id)
             }
-            orders_collection.insert_one(order_data)
+            order_id = orders_collection.insert_one(order_data).inserted_id
             flash('Order placed successfully.', 'success')
             return redirect(url_for('client_dashboard'))
         else:
@@ -189,55 +184,48 @@ def display_image(order_id, image_type):
 @app.route('/chat/<order_id>', methods=['GET', 'POST'])
 @login_required
 def chat(order_id):
-    # Ensure the user is authorized to view this chat
-    order = orders_collection.find_one({"_id": ObjectId(order_id)})
-    if not order:
-        flash('Order not found.', 'danger')
-        return redirect(url_for('index'))
-
-    if (current_user.role != 'client' and order['uploaded_by'] != ObjectId(current_user.id)) and \
-       (current_user.role not in ['administrator', 'facilitator']):
-        flash('Access denied.', 'danger')
-        return redirect(url_for('index'))
-
     if request.method == 'POST':
         message = request.form['message']
-        chats_collection.insert_one({
-            "order_id": ObjectId(order_id),
-            "user_id": ObjectId(current_user.id),
-            "username": current_user.username,
-            "message": message,
-            "timestamp": datetime.utcnow()
-        })
-        flash('Message sent.', 'success')
-        return redirect(url_for('chat', order_id=order_id))
-
-    # Fetch chat messages
+        if message:
+            chat_data = {
+                "order_id": ObjectId(order_id),
+                "username": current_user.username,
+                "message": message,
+                "timestamp": datetime.now(),
+                "user_id": ObjectId(current_user.id)
+            }
+            chats_collection.insert_one(chat_data)
+            flash('Message sent.', 'success')
+    
+    # Fetch messages for the order
     chats = chats_collection.find({"order_id": ObjectId(order_id)}).sort("timestamp", 1)
-    return render_template('chat.html', order=order, chats=chats)
+    messages = []
+    for chat in chats:
+        messages.append({
+            "username": chat["username"],
+            "message": chat["message"],
+            "timestamp": chat["timestamp"].strftime('%Y-%m-%d %H:%M:%S')
+        })
+    
+    return render_template('chat.html', order_id=order_id, messages=messages)
 
-@socketio.on('message')
-def handle_message(data):
-    order_id = data['order_id']
-    message = data['message']
-    user_id = current_user.id
-    timestamp = datetime.utcnow()
-
-    # Save message to database
-    chats_collection.insert_one({
-        "order_id": ObjectId(order_id),
-        "username": current_user.username,
-        "user_id": ObjectId(user_id),
-        "message": message,
-        "timestamp": timestamp
-    })
-
-    # Emit message to all clients
-    emit('message', {'user_id': user_id, 'message': message, 'timestamp': timestamp.strftime('%Y-%m-%d %H:%M:%S')}, broadcast=True)
+@app.route('/fetch_messages/<order_id>', methods=['GET'])
+@login_required
+def fetch_messages(order_id):
+    chats = chats_collection.find({"order_id": ObjectId(order_id)}).sort("timestamp", 1)
+    messages = []
+    for chat in chats:
+        messages.append({
+            "username": chat["username"],
+            "message": chat["message"],
+            "timestamp": chat["timestamp"].strftime('%Y-%m-%d %H:%M:%S')
+        })
+    
+    return jsonify({"messages": messages})
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    app.run(debug=True)
