@@ -35,9 +35,9 @@
 
             <p><strong>HD Picture:</strong></p>
             <img src="{{ url_for('display_image', order_id=order['_id'], image_type='hd_picture') }}" alt="HD Picture" style="max-width: 300px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-            {% if order['pet_picture'] %}
+            {% if order['animal_picture_id'] %}
             <p><strong>Pet Picture:</strong></p>
-            <img src="{{ url_for('display_image', order_id=order['_id'], image_type='pet_picture') }}" alt="Pet Picture" style="max-width: 300px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+            <img src="{{ url_for('display_image', order_id=order['_id'], image_type='animal_picture') }}" alt="Pet Picture" style="max-width: 300px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
             {% endif %}
         </div>
     </li>

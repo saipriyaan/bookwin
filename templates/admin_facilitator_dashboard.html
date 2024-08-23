@@ -10,7 +10,7 @@
     <li>
         <a href="{{ url_for('chat', order_id=order['_id']) }}">Chat</a>
         <p><strong>Order ID:</strong> {{ order['_id'] }}</p>
-        <p><strong>Clent Email:</strong> {{ order['username'] }}</p>
+        <p><strong>Client Email:</strong> {{ order['username'] }}</p>
         <p><strong>Name:</strong> {{ order['name'] }}</p>
         <p><strong>Gender:</strong> {{ order['gender'] }}</p>
         <p><strong>Style:</strong> {{ order['style'] }}</p>
@@ -21,9 +21,9 @@
         {% endif %}
         <p><strong>HD Picture:</strong></p>
         <img src="{{ url_for('display_image', order_id=order['_id'], image_type='hd_picture') }}" alt="HD Picture" style="max-width: 300px;">
-        {% if order['pet_picture'] %}
+        {% if order['animal_picture_id'] %}
         <p><strong>Pet Picture:</strong></p>
-        <img src="{{ url_for('display_image', order_id=order['_id'], image_type='pet_picture') }}" alt="Pet Picture" style="max-width: 300px;">
+        <img src="{{ url_for('display_image', order_id=order['_id'], image_type='animal_picture') }}" alt="Pet Picture" style="max-width: 300px;">
         {% endif %}
         
         <form method="POST" action="{{ url_for('update_order', order_id=order['_id']) }}">
@@ -31,7 +31,7 @@
             <select name="status">
                 <option value="pending" {% if order['status'] == 'pending' %}selected{% endif %}>Pending</option>
                 <option value="in_progress" {% if order['status'] == 'in_progress' %}selected{% endif %}>In Progress</option>
-                <option value="completed" {% if order['status'] == 'in_progress' %}selected{% endif %}>Completed</option>
+                <option value="completed" {% if order['status'] == 'completed' %}selected{% endif %}>Completed</option>
             </select>
             <button type="submit">Update</button>
         </form>

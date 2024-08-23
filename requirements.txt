@@ -6,3 +6,8 @@ flask-login
 flask-bcrypt
 flask-socketio
 Flask-Mail
+google-auth 
+google-auth-oauthlib 
+google-auth-httplib2 
+google-api-python-client
+requests
