@@ -260,12 +260,16 @@ def update_order(order_id):
         return redirect(url_for('index'))
     
     status = request.form['status']
-    orders_collection.update_one(
-        {"_id": ObjectId(order_id)},
-        {"$set": {"status": status}}
-    )
-    flash('Order status updated.', 'success')
+    if status in ['pending', 'in_progress', 'approval', 'payment_pending', 'completed']:
+        orders_collection.update_one(
+            {"_id": ObjectId(order_id)},
+            {"$set": {"status": status}}
+        )
+        flash('Order status updated.', 'success')
+    else:
+        flash('Invalid status update.', 'danger')
     return redirect(url_for('admin_facilitator_dashboard'))
+
 
 @app.route('/reject_order/<order_id>', methods=['POST'])
 @login_required
@@ -442,6 +446,84 @@ def display_image(order_id, image_type):
             abort(404, description="Image fetch failed")
     except Exception as e:
         abort(500, description=f"Error fetching image: {e}")
+
+import paypalrestsdk
+
+paypalrestsdk.configure({
+    "mode": "sandbox",  # Change to "live" for production
+    "client_id": "ASj-Xf_9xqfLfOg6tZywOl6lcta9dceYoiy51-yRaAF0ceyX-d4c8Sd5LTcQ_YKkQjwxNco4NmK176Nu",
+    "client_secret": "EMtkLyRrkibEjQs3MEAYF7n22eon45Oqn9V6NCI7JmJ3eRAX4sA5I5DqSXsmuGCBPLcPVpU6JT5qUcgZ"
+})
+
+
+@app.route('/pay/<order_id>', methods=['GET'])
+@login_required
+def pay(order_id):
+    order = orders_collection.find_one({"_id": ObjectId(order_id)})
+    if not order:
+        flash('Order not found.', 'danger')
+        return redirect(url_for('index'))
+
+    payment = paypalrestsdk.Payment({
+        "intent": "sale",
+        "payer": {
+            "payment_method": "paypal"
+        },
+        "redirect_urls": {
+            "return_url": url_for('payment_success', order_id=order_id, _external=True),
+            "cancel_url": url_for('payment_cancelled', _external=True)
+        },
+        "transactions": [{
+            "item_list": {
+                "items": [{
+                    "name": "Order Payment",
+                    "sku": "item",
+                    "price": 100,  # The amount should be in your order details
+                    "currency": "USD",
+                    "quantity": 1
+                }]
+            },
+            "amount": {
+                "total": 100,
+                "currency": "USD"
+            },
+            "description": "Payment for order."
+        }]
+    })
+
+    if payment.create():
+        for link in payment.links:
+            if link.rel == "approval_url":
+                approval_url = link.href
+                return redirect(approval_url)
+    else:
+        flash('Payment creation failed.', 'danger')
+        return redirect(url_for('client_dashboard'))
+
+@app.route('/payment_success', methods=['GET'])
+@login_required
+def payment_success():
+    payment_id = request.args.get('paymentId')
+    payer_id = request.args.get('PayerID')
+    order_id = request.args.get('order_id')
+
+    payment = paypalrestsdk.Payment.find(payment_id)
+    if payment.execute({"payer_id": payer_id}):
+        orders_collection.update_one(
+            {"_id": ObjectId(order_id)},
+            {"$set": {"status": "completed"}}
+        )
+        flash('Payment successful and order completed.', 'success')
+    else:
+        flash('Payment execution failed.', 'danger')
+
+    return redirect(url_for('client_dashboard'))
+
+@app.route('/payment_cancelled', methods=['GET'])
+def payment_cancelled():
+    flash('Payment cancelled.', 'warning')
+    return redirect(url_for('client_dashboard'))
+
 
 
 def get_image_url_from_storage(image_id):
