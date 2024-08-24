@@ -64,7 +64,7 @@ def get_credentials():
         scopes=credentials_data['scopes']
     )
         # credentials = google.oauth2.credentials.Credentials(**token_data["token"])
-        flash('Please authorize the application through the provided link.', 'success')
+        # flash('Please authorize the application through the provided link.', 'success')
     else:
         flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES)
         flow.redirect_uri = url_for('oauth2callback', _external=True)
