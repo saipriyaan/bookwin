@@ -28,7 +28,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
-            padding: 20px;
+            padding: 30px;
             max-width: 1200px;
             margin: 0 auto;
         }
@@ -104,6 +104,42 @@
         .gallery-item:hover img {
             transform: scale(1.1);
         }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+        .navbar ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        .navbar ul li {
+            display: inline;
+        }
+        .navbar ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.2em;
+            transition: color 0.3s ease;
+        }
+        .navbar ul li a:hover {
+            color: #fda085;
+        }
+        h1 {
+            text-align: center;
+            margin-top: 100px;
+            color: #ffffff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
         .style-description {
             position: absolute;
             bottom: 0;
@@ -116,6 +152,14 @@
     </style>
 </head>
 <body>
+    <div class="navbar">
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+            <li><a href="#styles">Styles</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </div>
     <h1>Welcome to the AI Portrait Studio</h1>
     <p>Transform your photos into stunning works of art. Choose from six unique styles, each designed to bring out the best in your images.</p>
 
