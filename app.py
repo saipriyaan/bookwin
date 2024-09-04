@@ -27,8 +27,10 @@ db = client['drawing_business']
 users_collection = db['users']
 orders_collection = db['orders']
 chats_collection = db['chats']
+payment_success_collection=db['payment']
 tokens_collection = db['tokens']
 tokens=db['google_drive_token']
+
 
 # Flask-Mail Configuration
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -121,11 +123,22 @@ def signup():
     if request.method == 'POST':
         username = request.form['username'].lower()
         password = request.form['password']
-        hashed_password =  password
+        hashed_password = password  # Consider hashing the password here
+
+        # Check if the username (email) already exists
+        existing_user = users_collection.find_one({"username": username})
+        
+        if existing_user:
+            flash('An account with this email already exists. Please log in or use a different email.', 'danger')
+            return redirect(url_for('signup'))
+
+        # Insert new user if no duplicate found
         users_collection.insert_one({"username": username, "password": hashed_password, "role": "client"})
         flash('Account created successfully. Please log in.', 'success')
         return redirect(url_for('login'))
+    
     return render_template('signup.html')
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -259,9 +272,9 @@ def place_order():
                 <body style="font-family: Arial, sans-serif; background-color: #f7f7f7; margin: 0; padding: 20px;">
                     <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); padding: 20px;">
                         <h2 style="color: #4caf50; text-align: center;">Order Confirmation</h2>
-                        <p>Dear {{ username }},</p>
+                        <p>Dear Customer,</p>
                         <p>Thank you for placing your order with us. Here are the details of your order:</p>
-                        <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+                        <table style="width: 90%; border-collapse: collapse; margin: 20px 0;">
                             <tr>
                                 <td style="padding: 10px; border: 1px solid #ddd;">Order ID:</td>
                                 <td style="padding: 10px; border: 1px solid #ddd;">{{ order_id }}</td>
@@ -299,6 +312,11 @@ def place_order():
             msg = Message('Order Confirmation - Your Order with Us',
                           sender='expenditure.cob@gmail.com',
                           recipients=[current_user.username])
+            msg.html = email_html
+            mail.send(msg)
+            msg = Message('New Order',
+                          sender='expenditure.cob@gmail.com',
+                          recipients=["expenditure.cob@gmail.com"])
             msg.html = email_html
             mail.send(msg)
 
@@ -560,6 +578,10 @@ def pay(order_id):
         flash('Payment creation failed.', 'danger')
         return redirect(url_for('client_dashboard'))
 
+from flask_mail import Message
+from bson.objectid import ObjectId
+from datetime import datetime
+
 @app.route('/payment_success', methods=['GET'])
 @login_required
 def payment_success():
@@ -568,12 +590,40 @@ def payment_success():
     order_id = request.args.get('order_id')
 
     payment = paypalrestsdk.Payment.find(payment_id)
+    
     if payment.execute({"payer_id": payer_id}):
+        # Update order status in the database
         orders_collection.update_one(
             {"_id": ObjectId(order_id)},
-            {"$set": {"status": "completed"}}
+            {"$set": {"status": "completed", "payment_id": payment_id, "payment_time": datetime.utcnow()}}
         )
-        flash('Payment successful and order completed.', 'success')
+        payment_success_collection.insert_one({
+            "order_id": ObjectId(order_id),
+            "payment_id": payment_id,
+            "payer_id": payer_id,
+            "amount": payment.transactions[0].amount.total,
+            "currency": payment.transactions[0].amount.currency,
+            "payment_time": datetime.utcnow()
+        })
+
+        # Retrieve the customer's email address from the order or user collection
+        order = orders_collection.find_one({"_id": ObjectId(order_id)})
+        customer_email = current_user.username
+        print('payment customer email',customer_email)
+
+        # Prepare email content
+        email_subject = 'Payment Successful - Your Order is Completed'
+        email_html = render_template('payent_success.html', payment=payment, order=order)
+
+        # Send email to the customer
+        msg = Message(email_subject, recipients=[customer_email],sender='expenditure.cob@gmail.com')
+        msg.html = email_html
+        mail.send(msg)
+        msg = Message(email_subject, recipients=["expenditure.cob@gmail.com"] ,sender='expenditure.cob@gmail.com')
+        msg.html = email_html
+        mail.send(msg)
+
+        flash('Payment successful, order completed, and confirmation email sent.', 'success')
     else:
         flash('Payment execution failed.', 'danger')
 

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #4CAF50;
+        }
+        p {
+            line-height: 1.6;
+        }
+        .details {
+            margin-top: 20px;
+        }
+        .details th, .details td {
+            padding: 8px 12px;
+        }
+        .details th {
+            text-align: left;
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Payment Successful!</h1>
+        <p>Dear {{ order['customer_name'] }},</p>
+        <p>We are pleased to inform you that your payment has been successfully processed. Your order is now completed and will be delivered to you as soon as possible.</p>
+
+        <div class="details">
+            <h2>Payment Details</h2>
+            <table>
+                <tr>
+                    <th>Order ID:</th>
+                    <td>{{ order['_id'] }}</td>
+                </tr>
+                <tr>
+                    <th>Payment ID:</th>
+                    <td>{{ payment.id }}</td>
+                </tr>
+                <tr>
+                    <th>Payment Time:</th>
+                    <td>{{ payment.create_time }}</td>
+                </tr>
+                <tr>
+                    <th>Amount:</th>
+                    <td>{{ payment.transactions[0].amount.total }} {{ payment.transactions[0].amount.currency }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <p>Thank you for your purchase!</p>
+        <p>Best regards,<br>Your Company Name</p>
+    </div>
+</body>
+</html>
