@@ -209,6 +209,7 @@ def upload_to_gdrive(file_data, filename, credentials):
 
     return file_id
 
+from flask import render_template_string
 
 @app.route('/place_order', methods=['GET', 'POST'])
 @login_required
@@ -244,12 +245,71 @@ def place_order():
                 "uploaded_by": ObjectId(current_user.id)
             }
             order_id = orders_collection.insert_one(order_data).inserted_id
+
+            # Send confirmation email
+            email_html = render_template_string('''
+                <!-- HTML Template from above -->
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Order Confirmation</title>
+                </head>
+                <body style="font-family: Arial, sans-serif; background-color: #f7f7f7; margin: 0; padding: 20px;">
+                    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); padding: 20px;">
+                        <h2 style="color: #4caf50; text-align: center;">Order Confirmation</h2>
+                        <p>Dear {{ username }},</p>
+                        <p>Thank you for placing your order with us. Here are the details of your order:</p>
+                        <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid #ddd;">Order ID:</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">{{ order_id }}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid #ddd;">Name:</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">{{ name }}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid #ddd;">Gender:</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">{{ gender }}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid #ddd;">Style:</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">{{ style }}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid #ddd;">Message to Designer:</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">{{ message_to_designer }}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid #ddd;">Status:</td>
+                                <td style="padding: 10px; border: 1px solid #ddd; color: #2196f3;">Pending</td>
+                            </tr>
+                        </table>
+                        <p>Your order is being processed. You will receive updates on the progress of your order soon.</p>
+                        <p>If you have any questions, feel free to send a message in chat  .</p>
+                        <p style="text-align: center; margin-top: 30px;">Thank you for choosing our service!</p>
+                        <p style="text-align: center; color: #999;">Deam Photo AI &copy; 2024  All rights reserved.</p>
+                    </div>
+                </body>
+                </html>
+            ''', order_id=order_id, name=name, gender=gender, style=style, message_to_designer=message_to_designer)
+
+            msg = Message('Order Confirmation - Your Order with Us',
+                          sender='expenditure.cob@gmail.com',
+                          recipients=[current_user.username])
+            msg.html = email_html
+            mail.send(msg)
+
+
             flash('Order placed successfully.', 'success')
             return redirect(url_for('client_dashboard'))
         else:
             flash('Image must be less than 5 MB!', 'danger')
-    
+
     return render_template('place_order.html')
+
 
 
 @app.route('/update_order/<order_id>', methods=['POST'])
