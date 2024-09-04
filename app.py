@@ -119,7 +119,7 @@ def load_user(user_id):
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
-        username = request.form['username']
+        username = request.form['username'].lower()
         password = request.form['password']
         hashed_password =  password
         users_collection.insert_one({"username": username, "password": hashed_password, "role": "client"})
@@ -130,7 +130,7 @@ def signup():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form['username']
+        username = request.form['username'].lower()
         password = request.form['password']
         user = users_collection.find_one({"username": username})
         if user and user['password']== password:
