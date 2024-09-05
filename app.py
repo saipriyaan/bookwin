@@ -238,6 +238,7 @@ def place_order():
         name = request.form['name']
         message_to_designer = request.form['message_to_designer']
         style = request.form['style']
+        style2 = request.form['style2']
 
         credentials = get_credentials()
         if hd_picture and hd_picture.content_length <= 5 * 1024 * 1024:
@@ -253,6 +254,7 @@ def place_order():
                 "name": name,
                 "message_to_designer": message_to_designer,
                 "style": style,
+                "style2": style2,
                 "status": "pending",
                 "rejection_message": "",
                 "uploaded_by": ObjectId(current_user.id)
@@ -288,8 +290,12 @@ def place_order():
                                 <td style="padding: 10px; border: 1px solid #ddd;">{{ gender }}</td>
                             </tr>
                             <tr>
-                                <td style="padding: 10px; border: 1px solid #ddd;">Style:</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">Style 1:</td>
                                 <td style="padding: 10px; border: 1px solid #ddd;">{{ style }}</td>
+                            </tr>
+                                                <tr>
+                                <td style="padding: 10px; border: 1px solid #ddd;">Style 2:</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">{{ style2 }}</td>
                             </tr>
                             <tr>
                                 <td style="padding: 10px; border: 1px solid #ddd;">Message to Designer:</td>
@@ -307,7 +313,7 @@ def place_order():
                     </div>
                 </body>
                 </html>
-            ''', order_id=order_id, name=name, gender=gender, style=style, message_to_designer=message_to_designer)
+            ''', order_id=order_id, name=name, gender=gender, style2=style2, style=style, message_to_designer=message_to_designer)
 
             msg = Message('Order Confirmation - Your Order with Us',
                           sender='expenditure.cob@gmail.com',
