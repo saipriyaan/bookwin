@@ -222,6 +222,11 @@ def upload_to_gdrive(file_data, filename, credentials):
 
     return file_id
 
+@app.route('/styles')
+def styles():
+    return render_template('style.html')
+
+
 from flask import render_template_string
 
 @app.route('/place_order', methods=['GET', 'POST'])
