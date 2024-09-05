@@ -43,6 +43,27 @@
                     <div style="height: 100%; width: {% if order['status'] == 'completed' %}100%{% elif order['status'] == 'in_progress' %}33%{% elif order['status'] == 'pending' %}0%{% else %}0%{% endif %}; background-color: #2196f3; border-radius: 4px; transition: width 0.3s ease;"></div>
                 </div>
             </div>
+            {% if order.get('sample_picture') %}
+    <div class="sample-picture">
+      <h4>Sample Picture:</h4>
+      {% if order.sample_picture.type == 'image' %}
+      <img src="{{ url_for('display_image', order_id=order['_id'], image_type='sample_picture') }}" alt="Pet Picture" style="max-width: 300px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+      {% else %}
+        <a href="{{ order.sample_picture.link }}" target="_blank">View Sample</a>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  {% if order.get('final_picture') %}
+    <div class="final-picture">
+      <h4>Final Picture:</h4>
+      {% if order.final_picture.type == 'image' %}
+      <img src="{{ url_for('display_image', order_id=order['_id'], image_type='final_picture') }}" alt="Pet Picture" style="max-width: 300px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+      {% else %}
+        <a href="{{ order.final_picture.link }}" target="_blank">View Final</a>
+      {% endif %}
+    </div>
+  {% endif %}
 
             <p><strong>HD Picture:</strong></p>
             <img src="{{ url_for('display_image', order_id=order['_id'], image_type='hd_picture') }}" alt="HD Picture" style="max-width: 300px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">

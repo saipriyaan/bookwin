@@ -52,6 +52,47 @@
             <input type="file" name="new_image" accept="image/*"><br>
             <button type="submit">Reupload</button>
         </form>
+        <form action="{{ url_for('upload_picture', order_id=order['_id']) }}" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+              <label for="upload_type">Upload Type:</label>
+              <select name="upload_type" class="form-control" required>
+                <option value="sample">Sample Picture</option>
+                <option value="final">Final Picture</option>
+              </select>
+            </div>
+      
+            <div class="form-group">
+              <label for="picture_file">Upload Image (Max 5MB):</label>
+              <input type="file" name="picture_file" class="form-control">
+            </div>
+      
+            <div class="form-group">
+              <label for="picture_link">Or provide a link:</label>
+              <input type="url" name="picture_link" class="form-control">
+            </div>
+      
+            <button type="submit" class="btn btn-primary">Upload</button>
+          </form>
+      
+          {% if order.get('sample_picture') %}
+            <p>Sample Picture Uploaded: 
+              {% if order.sample_picture.type == 'image' %}
+                <img src="https://drive.google.com/uc?id={{ order.sample_picture.image_id }}" alt="Sample" width="100px">
+              {% else %}
+                <a href="{{ order.sample_picture.link }}" target="_blank">Sample Picture Link</a>
+              {% endif %}
+            </p>
+          {% endif %}
+      
+          {% if order.get('final_picture') %}
+            <p>Final Picture Uploaded: 
+              {% if order.final_picture.type == 'image' %}
+                <img src="https://drive.google.com/uc?id={{ order.final_picture.image_id }}" alt="Final" width="100px">
+              {% else %}
+                <a href="{{ order.final_picture.link }}" target="_blank">Final Picture Link</a>
+              {% endif %}
+            </p>
+          {% endif %}
     </li>
     {% endfor %}
 </ul>

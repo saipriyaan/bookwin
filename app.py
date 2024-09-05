@@ -374,6 +374,43 @@ def reject_order(order_id):
     )
     flash('Order rejected.', 'success')
     return redirect(url_for('admin_facilitator_dashboard'))
+@app.route('/upload_picture/<order_id>', methods=['POST'])
+@login_required
+def upload_picture(order_id):
+    if current_user.role not in ['administrator', 'facilitator']:
+        flash('Access denied.', 'danger')
+        return redirect(url_for('index'))
+
+    # Determine if uploading a sample or final picture
+    upload_type = request.form.get('upload_type')  # 'sample' or 'final'
+
+    picture_file = request.files.get('picture_file')
+    picture_link = request.form.get('picture_link')
+
+    if picture_file and picture_file.content_length <= 5 * 1024 * 1024:
+        credentials = get_credentials()
+        image_id = upload_to_gdrive(picture_file.read(), secure_filename(picture_file.filename), credentials)
+        picture_data = {"image_id": image_id, "type": "image"}
+    elif picture_link:
+        picture_data = {"link": picture_link, "type": "link"}
+    else:
+        flash('Invalid picture file or link.', 'danger')
+        return redirect(url_for('admin_facilitator_dashboard'))
+
+    # Update the order with the uploaded picture
+    if upload_type == 'sample':
+        orders_collection.update_one(
+            {"_id": ObjectId(order_id)},
+            {"$set": {"sample_picture": picture_data}}
+        )
+    elif upload_type == 'final':
+        orders_collection.update_one(
+            {"_id": ObjectId(order_id)},
+            {"$set": {"final_picture": picture_data}}
+        )
+    
+    flash(f'{upload_type.capitalize()} picture uploaded successfully.', 'success')
+    return redirect(url_for('admin_facilitator_dashboard'))
 
 @app.route('/reupload_image/<order_id>', methods=['POST'])
 @login_required
@@ -512,14 +549,20 @@ def send_email(subject, recipient, body):
 
 @app.route('/display_image/<order_id>/<image_type>')
 def display_image(order_id, image_type):
+    print(image_type)
     # Fetch document from MongoDB
     document = orders_collection.find_one({"_id": ObjectId(order_id)})
 
     if document is None:
         abort(404, description="Document not found")
-
-    # Determine the image ID based on the type
-    image_id = document.get(f"{image_type}_id")
+    if image_type=="sample_picture":
+        image_id = document.get(f"{image_type}").get('image_id')
+        print('the image is sample')
+    elif image_type=="final_picture":
+        image_id = document.get(f"{image_type}").get('image_id')
+        print('the image is final')
+    else:
+        image_id = document.get(f"{image_type}_id")
     if not image_id:
         abort(404, description="Image not found")
 
