@@ -118,7 +118,7 @@
         }
         .navbar ul li a {
             color: #fff;
-            
+
             text-decoration: none;
             font-size: 1.2em;
             transition: color 0.3s ease;
@@ -137,9 +137,17 @@
 <body>
     <div class="navbar">
         <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/login">Login</a></li>
-            <li><a href="/signup">Signup</a></li>
+              <li><a href="/">Home</a></li>
+
+            {% if client_logged_in %}
+                <li><a href="/client_dashboard">Client Dashboard</a></li>
+                <li><a href="/logout">Logout</a></li>
+            {% else %}
+                <li><a href="/login">Login</a></li>
+                <li><a href="/signup">Signup</a></li>
+            {% endif %}
+            
+            <li><a href="#contact">Contact</a></li>
             <li><a href="/styles">Styles</a></li>
         </ul>
     </div>

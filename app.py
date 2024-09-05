@@ -47,11 +47,14 @@ SCOPES = ['https://www.googleapis.com/auth/drive.file']
 API_SERVICE_NAME = 'drive'
 API_VERSION = 'v3'
 
-
+from flask_login import current_user
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    client_logged_in = current_user.is_authenticated  # Check if user is logged in
+    return render_template('index.html', client_logged_in=client_logged_in)
+
+
 def get_credentials():
     credentials_data = tokens.find_one({"client_secret": "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"})
     print(credentials_data,'the files is ')
@@ -224,7 +227,11 @@ def upload_to_gdrive(file_data, filename, credentials):
 
 @app.route('/styles')
 def styles():
-    return render_template('style.html')
+    client_logged_in = current_user.is_authenticated
+    
+    
+    return render_template('style.html', client_logged_in=client_logged_in) # Check if user is logged in
+
 
 
 from flask import render_template_string
