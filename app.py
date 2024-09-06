@@ -14,7 +14,9 @@ from flask_mail import Mail, Message
 from io import BytesIO
 from werkzeug.utils import secure_filename
 import requests
-
+import os
+from flask import Flask, render_template
+from pdf2image import convert_from_path
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 bcrypt = Bcrypt(app)
@@ -97,6 +99,12 @@ def oauth2callback():
 
     print('Authorization successful.', 'success')
     return redirect(url_for('index'))
+
+
+@app.route('/view_pdf')
+def view_pdf():
+    # Render the HTML page that displays the PDF
+    return render_template('view_pdf.html')
 
 def credentials_to_dict(credentials):
     return {

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View PDF</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            user-select: none;
+     
+        }
+
+        /* Styling the container for the PDF images */
+        .pdf-container {
+            width: 70%;
+            margin: 0 auto;
+            background-color: #fff;
+            border: 2px solid #ccc;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .pdf-page {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        /* Disable right-click */
+        body {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        /* Hide developer tools */
+        .no-console {
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>View PDF</h1>
+    <p>This PDF is displayed as images to prevent download options:</p>
+
+    <!-- Container for the PDF images -->
+    <div class="pdf-container">
+        <img class="pdf-page" src="{{ url_for('static', filename='pdf_images/page_1.png') }}" alt="Page 1">
+        <img class="pdf-page" src="{{ url_for('static', filename='pdf_images/page_2.png') }}" alt="Page 2">
+        <!-- Add more pages as necessary -->
+    </div>
+
+    <script>
+        // Disable right-click
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        // Disable F12, Ctrl+Shift+I, Ctrl+S, and Ctrl+s
+        document.addEventListener('keydown', function(e) {
+            if (e.keyCode === 123 || // F12
+                (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || // Ctrl+Shift+I/J
+                (e.ctrlKey && e.keyCode === 83) || // Ctrl+S
+                (e.ctrlKey && e.keyCode === 115)) { // Ctrl+s
+                e.preventDefault();
+                window.location.replace('/'); // Redirect to home page
+            }
+        });
+
+        // Hide developer tools console
+        (function() {
+            var originalConsole = console;
+            console = new Proxy(console, {
+                get: function(target, prop) {
+                    if (prop === 'log' || prop === 'warn' || prop === 'error') {
+                        return function() {
+      
+                        };
+                    }
+                    return target[prop];
+                }
+            });
+        })();
+    </script>
+
+</body>
+</html>
