@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, flash, request, send_file, jsonify,abort
+from flask import Flask, render_template, redirect, url_for, flash, request, send_file, jsonify,abort,session
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_bcrypt import Bcrypt
 from pymongo import MongoClient
@@ -18,6 +18,7 @@ import os
 from flask import Flask, render_template
 from pdf2image import convert_from_path
 app = Flask(__name__)
+import uuid
 app.secret_key = 'your_secret_key'
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
@@ -26,6 +27,7 @@ login_manager.login_view = 'login'
 # MongoDB Atlas Connection
 client = MongoClient("mongodb+srv://sai:8778386853@cluster0.9vhjs.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 db = client['drawing_business']
+book_purchases_collection = db['book_purchases'] 
 users_collection = db['users']
 orders_collection = db['orders']
 chats_collection = db['chats']
@@ -101,10 +103,10 @@ def oauth2callback():
     return redirect(url_for('index'))
 
 
-@app.route('/view_pdf')
-def view_pdf():
-    # Render the HTML page that displays the PDF
-    return render_template('view_pdf.html')
+# @app.route('/view_pdf')
+# def view_pdf():
+#     # Render the HTML page that displays the PDF
+#     return render_template('view_pdf.html')
 
 def credentials_to_dict(credentials):
     return {
@@ -134,7 +136,7 @@ def signup():
     if request.method == 'POST':
         username = request.form['username'].lower()
         password = request.form['password']
-        hashed_password = password  # Consider hashing the password here
+        hashed_password = password 
 
         # Check if the username (email) already exists
         existing_user = users_collection.find_one({"username": username})
@@ -143,12 +145,121 @@ def signup():
             flash('An account with this email already exists. Please log in or use a different email.', 'danger')
             return redirect(url_for('signup'))
 
-        # Insert new user if no duplicate found
+        
         users_collection.insert_one({"username": username, "password": hashed_password, "role": "client"})
         flash('Account created successfully. Please log in.', 'success')
         return redirect(url_for('login'))
     
     return render_template('signup.html')
+
+
+@app.route('/purchase_book', methods=['GET', 'POST'])
+@login_required
+def purchase_book():
+    
+    purchase_record = book_purchases_collection.find_one({"user_id": current_user.id})
+
+    if purchase_record and purchase_record.get('has_purchased_book'):
+        # If the user has already purchased the book, redirect them to the view page
+        unique_link = purchase_record.get('book_link')
+        return redirect(url_for('view_book', unique_link=unique_link))
+
+    # If the user hasn't purchased the book yet and makes a POST request, process payment
+    if request.method == 'POST':
+        payment = paypalrestsdk.Payment({
+            "intent": "sale",
+            "payer": {
+                "payment_method": "paypal"
+            },
+            "redirect_urls": {
+                "return_url": url_for('paymentbook_success', _external=True),
+                "cancel_url": url_for('paymentbook_cancel', _external=True)
+            },
+            "transactions": [{
+                "item_list": {
+                    "items": [{
+                        "name": "E-book",
+                        "sku": "001",
+                        "price": "100.00",
+                        "currency": "USD",
+                        "quantity": 1
+                    }]
+                },
+                "amount": {
+                    "total": "100.00",
+                    "currency": "USD"
+                },
+                "description": "Purchase of PDF book."
+            }]
+        })
+
+        if payment.create():
+            session['payment_id'] = payment.id
+            for link in payment['links']:
+                if link['rel'] == 'approval_url':
+                    approval_url = str(link['href'])
+                    return redirect(approval_url)
+        else:
+            flash('An error occurred with PayPal payment.', 'danger')
+            return redirect(url_for('purchase_book'))
+
+    return render_template('purchase_book.html', has_purchased=False)
+
+# If user already purchased the book, pass this info to the template
+@app.route('/purchase_book_check')
+@login_required
+def purchase_book_check():
+    purchase_record = book_purchases_collection.find_one({"user_id": current_user.id})
+
+    if purchase_record and purchase_record.get('has_purchased_book'):
+        unique_link = purchase_record.get('book_link')
+        return render_template('purchase_book.html', has_purchased=True, unique_link=unique_link)
+
+    return render_template('purchase_book.html', has_purchased=False)
+
+# Payment success route
+@app.route('/paymentbook_success')
+@login_required
+def paymentbook_success():
+    payment_id = session.get('payment_id')
+    payment = paypalrestsdk.Payment.find(payment_id)
+
+    if payment.execute({"payer_id": request.args.get('PayerID')}):
+        flash('Payment completed successfully!', 'success')
+
+
+        unique_link = str(uuid.uuid4())
+
+
+        book_purchases_collection.insert_one({
+            "user_id": current_user.id,
+            "has_purchased_book": True,
+            "book_link": unique_link
+        })
+
+        return redirect(url_for('view_book', unique_link=unique_link))
+    else:
+        flash('Payment failed. Please try again.', 'danger')
+        return redirect(url_for('purchase_book'))
+
+# Payment cancel route
+@app.route('/paymentbook_cancel')
+@login_required
+def paymentbook_cancel():
+    flash('Payment was cancelled.', 'warning')
+    return redirect(url_for('purchase_book'))
+
+# View book route
+@app.route('/view_book/<unique_link>')
+@login_required
+def view_book(unique_link):
+    purchase_record = book_purchases_collection.find_one({"user_id": current_user.id})
+
+    if purchase_record and purchase_record.get('has_purchased_book') and purchase_record.get('book_link') == unique_link:
+        return render_template('view_pdf.html')  # This will display the PDF content
+    else:
+        flash('You do not have access to view this book.', 'danger')
+        return redirect(url_for('purchase_book'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
