@@ -34,7 +34,7 @@ chats_collection = db['chats']
 payment_success_collection=db['payment']
 tokens_collection = db['tokens']
 tokens=db['google_drive_token']
-queries_collection = db['queries']  # New collection to store queries and complaints
+queries_collection = db['queries'] 
 
 # Flask-Mail Configuration
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -158,9 +158,9 @@ def signup():
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
     management_team = [
-        {"name": "John Doe", "email": "john.doe@example.com", "position": "CEO"},
-        {"name": "Jane Smith", "email": "jane.smith@example.com", "position": "Customer Support"},
-        {"name": "Michael Brown", "email": "michael.brown@example.com", "position": "Technical Lead"}
+        {"name": "Sherwood Ballard", "email": "capitelnet@aol.com", "position": "Manager"},
+        {"name": "Sai Priyan J K", "email": "expenditure.cob@gmail.com", "position": "Technical Lead"},
+   
     ]
 
     if request.method == 'POST':
