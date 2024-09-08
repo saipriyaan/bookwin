@@ -34,7 +34,7 @@ chats_collection = db['chats']
 payment_success_collection=db['payment']
 tokens_collection = db['tokens']
 tokens=db['google_drive_token']
-
+queries_collection = db['queries']  # New collection to store queries and complaints
 
 # Flask-Mail Configuration
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -152,6 +152,38 @@ def signup():
     
     return render_template('signup.html')
 
+
+
+
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+    management_team = [
+        {"name": "John Doe", "email": "john.doe@example.com", "position": "CEO"},
+        {"name": "Jane Smith", "email": "jane.smith@example.com", "position": "Customer Support"},
+        {"name": "Michael Brown", "email": "michael.brown@example.com", "position": "Technical Lead"}
+    ]
+
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+        subject = request.form.get('subject')
+        message = request.form.get('message')
+
+        # Save form data to the new queries collection
+        query = {
+            "name": name,
+            "email": email,
+            "subject": subject,
+            "message": message,
+            "date_submitted": datetime.utcnow()  # Store the timestamp of submission
+        }
+
+        queries_collection.insert_one(query)  # Insert the form data into the queries collection
+
+        flash('Your query has been submitted successfully!', 'success')
+        return redirect(url_for('contact'))
+
+    return render_template('contact.html', management_team=management_team)
 
 @app.route('/purchase_book', methods=['GET', 'POST'])
 @login_required
