@@ -84,13 +84,13 @@
                 <a href="{{ url_for('admin_facilitator_dashboard') }}">Admin/Facilitator Dashboard</a>
             {% endif %}
             <a href="{{ url_for('styles') }}">Styles</a>
-            <a href="{{ url_for('client_dashboard') }}">Client Dashboard</a>
+            {% if current_user.role == 'client' %}
+                <a href="{{ url_for('client_dashboard') }}">Client Dashboard</a>
+            {% endif %}
             <a href="{{ url_for('place_order') }}">Place Order</a>
             <a href="{{ url_for('purchase_book') }}">ParentDen Book</a>
             <a href="{{ url_for('logout') }}">Logout</a>
         {% else %}
-        
-        
             <a href="{{ url_for('signup') }}">Sign Up</a>
             <a href="{{ url_for('login') }}">Login</a>
             <a href="{{ url_for('index') }}">Home</a>
@@ -98,6 +98,9 @@
         {% endif %}
     </nav>
     <div class="container">
+
+
+        
         {% with messages = get_flashed_messages(with_categories=True) %}
             {% if messages %}
                 {% for category, message in messages %}
