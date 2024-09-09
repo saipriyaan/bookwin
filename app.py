@@ -212,13 +212,13 @@ def purchase_book():
                     "items": [{
                         "name": "E-book",
                         "sku": "001",
-                        "price": "100.00",
+                        "price": "23.00",
                         "currency": "USD",
                         "quantity": 1
                     }]
                 },
                 "amount": {
-                    "total": "100.00",
+                    "total": "23.00",
                     "currency": "USD"
                 },
                 "description": "Purchase of PDF book."
@@ -237,7 +237,7 @@ def purchase_book():
 
     return render_template('purchase_book.html', has_purchased=False)
 
-# If user already purchased the book, pass this info to the template
+
 @app.route('/purchase_book_check')
 @login_required
 def purchase_book_check():
