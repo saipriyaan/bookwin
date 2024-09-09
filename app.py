@@ -249,7 +249,6 @@ def purchase_book_check():
 
     return render_template('purchase_book.html', has_purchased=False)
 
-# Payment success route
 @app.route('/paymentbook_success')
 @login_required
 def paymentbook_success():
@@ -259,16 +258,23 @@ def paymentbook_success():
     if payment.execute({"payer_id": request.args.get('PayerID')}):
         flash('Payment completed successfully!', 'success')
 
+        # Fetching user details from the users collection
+        user = users_collection.find_one({"_id": current_user.id})
 
         unique_link = str(uuid.uuid4())
+        timestamp = datetime.datetime.now()
 
-
+        # Inserting payment and purchase details into the collection
         book_purchases_collection.insert_one({
             "user_id": current_user.id,
+            "username": user['username'],  # Email from users collection
             "has_purchased_book": True,
-            "book_link": unique_link
+            "book_link": unique_link,
+            "payment_id": payment.id,  # PayPal ID
+            "timestamp": timestamp  # Purchase timestamp
         })
 
+        # Redirect to view the book
         return redirect(url_for('view_book', unique_link=unique_link))
     else:
         flash('Payment failed. Please try again.', 'danger')
