@@ -248,6 +248,21 @@ def purchase_book_check():
         return render_template('purchase_book.html', has_purchased=True, unique_link=unique_link)
 
     return render_template('purchase_book.html', has_purchased=False)
+from flask_login import current_user
+
+@app.route('/book_sales')
+@login_required
+def all_sales():
+    # Check if the current user is an admin (you can adjust this based on your user role system)
+    if current_user.role != 'administrator':
+        flash('You are not authorized to view this page.', 'danger')
+        return redirect(url_for('index'))
+    
+    # Fetch all purchases
+    all_purchases = book_purchases_collection.find()
+
+    return render_template('booden.html', purchases=all_purchases)
+
 
 @app.route('/paymentbook_success')
 @login_required
@@ -257,11 +272,15 @@ def paymentbook_success():
 
     if payment.execute({"payer_id": request.args.get('PayerID')}):
         flash('Payment completed successfully!', 'success')
+        
 
-        user = users_collection.find_one({"_id": current_user.id})
+        user = users_collection.find_one({"_id": ObjectId(current_user.id)})
+
+        print(user,'parentden')
 
         unique_link = str(uuid.uuid4())
-        timestamp = datetime.datetime.now()
+        timestamp = datetime.now()
+        print(timestamp, current_user.id, user)
 
         # Inserting payment and purchase details into the collection
         book_purchases_collection.insert_one({
