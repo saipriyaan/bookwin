@@ -39,8 +39,8 @@ queries_collection = db['queries']
 # Flask-Mail Configuration
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
-app.config['MAIL_USERNAME'] = "expenditure.cob@gmail.com"
-app.config['MAIL_PASSWORD'] = "hrhdkdiwwzungmjz"
+app.config['MAIL_USERNAME'] = "dreamphotostudioai@gmail.com"
+app.config['MAIL_PASSWORD'] = "yqvubyeyuegpapgv"
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 mail = Mail(app)
@@ -504,12 +504,12 @@ def place_order():
             ''', order_id=order_id, name=name, gender=gender, style2=style2, style=style, message_to_designer=message_to_designer)
 
             msg = Message('Order Confirmation - Your Order with Us',
-                          sender='expenditure.cob@gmail.com',
+                          sender='dreamphotostudioai@gmail.com',
                           recipients=[current_user.username])
             msg.html = email_html
             mail.send(msg)
             msg = Message('New Order',
-                          sender='expenditure.cob@gmail.com',
+                          sender='dreamphotostudioai@gmail.com',
                           recipients=["expenditure.cob@gmail.com"])
             msg.html = email_html
             mail.send(msg)
@@ -672,7 +672,7 @@ def chat(order_id):
                 if current_user.id != uploaded_by_id:
                     if current_user.username != client_email:
                         msg = Message('New Message in Your Order Chat',
-                                      sender='expenditure.cob@gmail.com',
+                                      sender='dreamphotostudioai@gmail.com',
                                       recipients=[client_email])
                         msg.body = f"New message from {current_user.username}:\n\n{message}"
                         mail.send(msg)
@@ -681,7 +681,7 @@ def chat(order_id):
                 # Send email notification to the admin
                 if current_user.id != uploaded_by_id:
                     admin_msg = Message('New Message in Order Chat',
-                                        sender='expenditure.cob@gmail.com',
+                                        sender='dreamphotostudioai@gmail.com',
                                         recipients=[admin_email])
                     admin_msg.body = f"New message in order {order_id} from {current_user.username}:\n\n{message}"
                     mail.send(admin_msg)
@@ -723,7 +723,7 @@ from flask_mail import Mail, Message
 # Existing Flask-Mail configuration here
 
 def send_email(subject, recipient, body):
-    msg = Message(subject, recipients=[recipient], body=body, sender="expenditure.cob@gmail.com")
+    msg = Message(subject, recipients=[recipient], body=body, sender="dreamphotostudioai@gmail.com")
     try:
         mail.send(msg)
         print(f"Email sent to {recipient}")
@@ -853,10 +853,10 @@ def payment_success():
         email_html = render_template('payent_success.html', payment=payment, order=order)
 
         # Send email to the customer
-        msg = Message(email_subject, recipients=[customer_email],sender='expenditure.cob@gmail.com')
+        msg = Message(email_subject, recipients=[customer_email],sender='dreamphotostudioai@gmail.com')
         msg.html = email_html
         mail.send(msg)
-        msg = Message(email_subject, recipients=["expenditure.cob@gmail.com"] ,sender='expenditure.cob@gmail.com')
+        msg = Message(email_subject, recipients=["expenditure.cob@gmail.com"] ,sender='edreamphotostudioai@gmail.com')
         msg.html = email_html
         mail.send(msg)
 
