@@ -74,23 +74,26 @@
             <button type="submit" class="btn btn-primary">Upload</button>
           </form>
       
-          {% if order.get('sample_picture') %}
-            <p>Sample Picture Uploaded: 
-              {% if order.sample_picture.type == 'image' %}
-                <img src="https://drive.google.com/uc?id={{ order.sample_picture.image_id }}" alt="Sample" width="100px">
-              {% else %}
-                <a href="{{ order.sample_picture.link }}" target="_blank">Sample Picture Link</a>
-              {% endif %}
-            </p>
-          {% endif %}
+        
+        {% if order.get('sample_picture') %}
+ <div class="sample-picture">
+   <h4>Sample Picture:</h4>
+   {% if order.sample_picture.type == 'image' %}
+   <img src="{{ url_for('display_image', order_id=order['_id'], image_type='sample_picture') }}" alt="Pet Picture" style="max-width: 300px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+   {% else %}
+     <a href="{{ order.sample_picture.link }}" target="_blank">View Sample</a>
+   {% endif %}
       
-          {% if order.get('final_picture') %}
-            <p>Final Picture Uploaded: 
-              {% if order.final_picture.type == 'image' %}
-                <img src="https://drive.google.com/uc?id={{ order.final_picture.image_id }}" alt="Final" width="100px">
-              {% else %}
-                <a href="{{ order.final_picture.link }}" target="_blank">Final Picture Link</a>
-              {% endif %}
+   {% if order.get('final_picture') %}
+   <div class="final-picture">
+     <h4>Final Picture:</h4>
+     {% if order.final_picture.type == 'image' %}
+     <img src="{{ url_for('display_image', order_id=order['_id'], image_type='final_picture') }}" alt="Pet Picture" style="max-width: 300px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+     {% else %}
+       <a href="{{ order.final_picture.link }}" target="_blank">View Final</a>
+     {% endif %}
+   </div>
+ {% endif %}
             </p>
           {% endif %}
     </li>

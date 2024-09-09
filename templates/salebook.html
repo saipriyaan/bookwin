@@ -6,7 +6,7 @@
 
     <div class="sales-section">
         <div class="row">
-            {% if purchases.count() > 0 %}
+            {% if purchase_count > 0 %}
                 <table class="table table-hover table-striped">
                     <thead>
                         <tr>
@@ -20,10 +20,10 @@
                     <tbody>
                         {% for purchase in purchases %}
                             <tr>
+                                <td>{{ purchase.user_id }}</td>
                                 <td>{{ purchase.username }}</td>
-                                <td>{{ purchase.email }}</td>
                                 <td>{{ purchase.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-                                <td>{{ purchase.paypal_id }}</td>
+                                <td>{{ purchase.payment_id }}</td>
                                 <td><a href="{{ url_for('view_book', unique_link=purchase.book_link) }}" target="_blank">View Book</a></td>
                             </tr>
                         {% endfor %}

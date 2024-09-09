@@ -252,16 +252,17 @@ from flask_login import current_user
 
 @app.route('/book_sales')
 @login_required
-def all_sales():
+def booksale():
     # Check if the current user is an admin (you can adjust this based on your user role system)
     if current_user.role != 'administrator':
         flash('You are not authorized to view this page.', 'danger')
         return redirect(url_for('index'))
     
-    # Fetch all purchases
+     # Fetch all purchases
     all_purchases = book_purchases_collection.find()
+    purchase_count = book_purchases_collection.count_documents({})
 
-    return render_template('booden.html', purchases=all_purchases)
+    return render_template('salebook.html', purchases=all_purchases, purchase_count=purchase_count)
 
 
 @app.route('/paymentbook_success')

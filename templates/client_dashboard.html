@@ -45,8 +45,7 @@
                 <div style="position: relative; height: 8px; background-color: #ddd; border-radius: 4px;">
                     <div style="height: 100%; width: {% if order['status'] == 'completed' %}100%{% elif order['status'] == 'in_progress' %}33%{% elif order['status'] == 'pending' %}0%{% else %}0%{% endif %}; background-color: #2196f3; border-radius: 4px; transition: width 0.3s ease;"></div>
                 </div>
-            </div>
-            {% if order.get('sample_picture') %}
+           {% if order.get('sample_picture') %}
     <div class="sample-picture">
       <h4>Sample Picture:</h4>
       {% if order.sample_picture.type == 'image' %}
@@ -56,7 +55,6 @@
       {% endif %}
     </div>
   {% endif %}
-
   {% if order.get('final_picture') %}
     <div class="final-picture">
       <h4>Final Picture:</h4>
