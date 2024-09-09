@@ -258,7 +258,6 @@ def paymentbook_success():
     if payment.execute({"payer_id": request.args.get('PayerID')}):
         flash('Payment completed successfully!', 'success')
 
-        # Fetching user details from the users collection
         user = users_collection.find_one({"_id": current_user.id})
 
         unique_link = str(uuid.uuid4())
@@ -267,7 +266,7 @@ def paymentbook_success():
         # Inserting payment and purchase details into the collection
         book_purchases_collection.insert_one({
             "user_id": current_user.id,
-            "username": user['username'],  # Email from users collection
+            "username": user['username'],  
             "has_purchased_book": True,
             "book_link": unique_link,
             "payment_id": payment.id,  # PayPal ID
