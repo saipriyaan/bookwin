@@ -212,7 +212,7 @@ def purchase_book():
                     "items": [{
                         "name": "E-book",
                         "sku": "001",
-                        "price": "100.00",
+                        "price": "20.00",
                         "currency": "USD",
                         "quantity": 1
                     }]
