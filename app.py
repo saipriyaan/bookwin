@@ -299,7 +299,7 @@ def paymentbook_success():
         flash('Payment failed. Please try again.', 'danger')
         return redirect(url_for('purchase_book'))
 
-# Payment cancel route
+
 @app.route('/paymentbook_cancel')
 @login_required
 def paymentbook_cancel():
@@ -313,7 +313,7 @@ def view_book(unique_link):
     purchase_record = book_purchases_collection.find_one({"user_id": current_user.id})
 
     if purchase_record and purchase_record.get('has_purchased_book') and purchase_record.get('book_link') == unique_link:
-        return render_template('view_pdf.html')  # This will display the PDF content
+        return render_template('view_pdf.html')  
     else:
         flash('You do not have access to view this book.', 'danger')
         return redirect(url_for('purchase_book'))
