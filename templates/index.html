@@ -151,6 +151,52 @@
             padding: 10px;
             text-align: center;
         }
+        footer {
+            background-color: rgba(0, 0, 0, 0.5); 
+    
+        color: #fff;
+        padding: 20px 0;
+        position: relative;
+        bottom: 0;
+        width: 100%;
+        text-align: center;
+        margin-top: 30px;
+        box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
+    }
+    .footer-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 10px 20px;
+    }
+    .footer-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .footer-content p {
+        margin: 5px 0;
+    }
+    .footer-links {
+        list-style: none;
+        display: flex;
+        gap: 20px;
+        padding: 0;
+        margin: 10px 0;
+    }
+    .footer-links li {
+        display: inline;
+    }
+    .footer-links li a {
+        color: #fff;
+        text-decoration: none;
+        font-size: 1em;
+        transition: color 0.3s ease;
+    }
+    .footer-links li a:hover {
+        color: #fda085;
+    }
+
     </style>
 </head>
 <body>
@@ -282,5 +328,20 @@
             }
         });
     </script>
+     <footer>
+        <div class="footer-container">
+            <div class="footer-content">
+                <p style="color: #ffffff;">&copy; 2024 Dream Photo AI. All rights reserved.</p>
+                <h4>Know anyone with kids still in school? 
+                    We are proud sponsors of our latest project, <strong>Parents School Den</strong>. It's designed to support parents and children on their educational journey.</h4>
+                <ul class="footer-links">  
+                  
+                    <li><a href="https://dreamkids.club/">Dream Kids</a></li>
+                  
+                    <li><a href="http://www.parentschoolden.com" target="_blank">Parent School Den</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

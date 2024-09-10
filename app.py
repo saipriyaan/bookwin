@@ -325,16 +325,28 @@ def login():
         username = request.form['username'].lower()
         password = request.form['password']
         user = users_collection.find_one({"username": username})
-        if user and user['password']== password:
+        
+        # Check if user exists and password is correct
+        if user and user['password'] == password:
             user_obj = User(str(user["_id"]), user['username'], user['role'])
             login_user(user_obj)
             flash('Logged in successfully.', 'success')
+
+            next_page = request.args.get('next')
+            if next_page:
+                return redirect(next_page)
+
+            # Redirect based on user role
             if user_obj.role == 'client':
                 return redirect(url_for('client_dashboard'))
             else:
                 return redirect(url_for('admin_facilitator_dashboard'))
+
         flash('Invalid username or password.', 'danger')
+
+    # Render login page
     return render_template('login.html')
+
 
 @app.route('/logout')
 @login_required
