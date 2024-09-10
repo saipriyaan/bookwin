@@ -82,6 +82,7 @@
         {% if current_user.is_authenticated %}
             {% if current_user.role != 'client' %}
                 <a href="{{ url_for('admin_facilitator_dashboard') }}">Admin/Facilitator Dashboard</a>
+                <a href="{{ url_for('booksale') }}">Parentden(sale)</a>
             {% endif %}
             <a href="{{ url_for('styles') }}">Styles</a>
             {% if current_user.role == 'client' %}
@@ -91,7 +92,7 @@
             {% endif %}
             
             <a href="{{ url_for('purchase_book') }}">ParentDen Book</a>
-            <a href="{{ url_for('booksale') }}">Parentden(sale)</a>
+            
             <a href="{{ url_for('logout') }}">Logout</a>
         {% else %}
             <a href="{{ url_for('signup') }}">Sign Up</a>
