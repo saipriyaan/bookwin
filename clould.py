@@ -7,7 +7,7 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 import pickle
 
-# If modifying these SCOPES, delete the file token.pickle.
+
 SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
 
 def main():
