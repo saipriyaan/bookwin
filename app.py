@@ -158,7 +158,7 @@ def signup():
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
     management_team = [
-        {"name": "Sherwood Ballard", "email": "capitelnet@aol.com", "position": "Manager"},
+        {"name": "Sherwood Ballard",'telephone':'1-800-389-0917' ,"email": "dreamkidsbiz@gmail.com", "position": "Manager"},
         {"name": "Sai Priyan J K", "email": "expenditure.cob@gmail.com", "position": "Technical Lead"},
    
     ]
