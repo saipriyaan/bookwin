@@ -8,7 +8,7 @@
         <p>You have already purchased this book.</p>
         <a href="{{ url_for('view_book', unique_link=unique_link) }}" class="btn btn-success">View Book</a>
     {% else %}
-    <img   src="{{ url_for('static', filename='den.png') }}" alt="alt">
+    <img                                                   style="width: 50%;"  src="{{ url_for('static', filename='den.png') }}" alt="alt">
         <p>The price for this E-book is $20 with a $3 tax. Learn more about this book <a href="https://parentsdenschool.com/">here</a></p>
         <form method="POST" action="{{ url_for('purchase_book') }}">
             <button type="submit" class="btn btn-primary">Buy Now</button>
