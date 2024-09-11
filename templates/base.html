@@ -83,6 +83,7 @@
             {% if current_user.role != 'client' %}
                 <a href="{{ url_for('admin_facilitator_dashboard') }}">Admin/Facilitator Dashboard</a>
                 <a href="{{ url_for('booksale') }}">Parentden(sale)</a>
+                <a href="{{ url_for('order') }}">Order(sale)</a>
             {% endif %}
             <a href="{{ url_for('styles') }}">Styles</a>
             {% if current_user.role == 'client' %}

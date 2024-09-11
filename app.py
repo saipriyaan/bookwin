@@ -869,7 +869,7 @@ def paymentbook_success():
 
 @app.route('/order')
 @login_required
-def admin_view_payments():
+def order():
     if current_user.role not in ['administrator', 'facilitator']:
         flash('Access denied.', 'danger')
         return redirect(url_for('index'))
