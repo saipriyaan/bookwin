@@ -498,7 +498,7 @@ def place_order():
             mail.send(msg)
             msg = Message('New Order',
                           sender='dreamphotostudioai@gmail.com',
-                          recipients=["expenditure.cob@gmail.com"])
+                          recipients=["expenditure.cob@gmail.com","dreamkidsbiz@gmail.com"])
             msg.html = email_html
             mail.send(msg)
 
@@ -918,7 +918,7 @@ def payment_success():
         msg = Message(email_subject, recipients=[customer_email],sender='dreamphotostudioai@gmail.com')
         msg.html = email_html
         mail.send(msg)
-        msg = Message(email_subject, recipients=["expenditure.cob@gmail.com"] ,sender='edreamphotostudioai@gmail.com')
+        msg = Message(email_subject, recipients=["expenditure.cob@gmail.com","dreamkidsbiz@gmail.com"] ,sender='dreamphotostudioai@gmail.com')
         msg.html = email_html
         mail.send(msg)
 
