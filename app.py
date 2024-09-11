@@ -17,6 +17,13 @@ import requests
 import os
 from flask import Flask, render_template
 from pdf2image import convert_from_path
+import pytz
+
+# Set the timezone to Eastern Time (ET)
+timezone = pytz.timezone('US/Eastern')
+
+# Get the current time in UTC
+
 app = Flask(__name__)
 import uuid
 app.secret_key = 'your_secret_key'
@@ -175,7 +182,7 @@ def contact():
             "email": email,
             "subject": subject,
             "message": message,
-            "date_submitted": datetime.utcnow()  # Store the timestamp of submission
+            "date_submitted": datetime.now(timezone)  # Store the timestamp of submission
         }
 
         queries_collection.insert_one(query)  # Insert the form data into the queries collection
@@ -264,40 +271,9 @@ def booksale():
 
     return render_template('salebook.html', purchases=all_purchases, purchase_count=purchase_count)
 
-
-@app.route('/paymentbook_success')
-@login_required
-def paymentbook_success():
-    payment_id = session.get('payment_id')
-    payment = paypalrestsdk.Payment.find(payment_id)
-
-    if payment.execute({"payer_id": request.args.get('PayerID')}):
-        flash('Payment completed successfully!', 'success')
-        
-
-        user = users_collection.find_one({"_id": ObjectId(current_user.id)})
-
-        print(user,'parentden')
-
-        unique_link = str(uuid.uuid4())
-        timestamp = datetime.now()
-        print(timestamp, current_user.id, user)
-
-        # Inserting payment and purchase details into the collection
-        book_purchases_collection.insert_one({
-            "user_id": current_user.id,
-            "username": user['username'],  
-            "has_purchased_book": True,
-            "book_link": unique_link,
-            "payment_id": payment.id,  # PayPal ID
-            "timestamp": timestamp  # Purchase timestamp
-        })
-
-        # Redirect to view the book
-        return redirect(url_for('view_book', unique_link=unique_link))
-    else:
-        flash('Payment failed. Please try again.', 'danger')
-        return redirect(url_for('purchase_book'))
+from flask_mail import Message
+from datetime import datetime
+import uuid
 
 
 @app.route('/paymentbook_cancel')
@@ -661,7 +637,7 @@ def chat(order_id):
                 "order_id": ObjectId(order_id),
                 "username": current_user.username,
                 "message": message,
-                "timestamp": datetime.now(),
+                "timestamp": datetime.now(timezone),
                 "user_id": ObjectId(current_user.id)
             }
             chats_collection.insert_one(chat_data)
@@ -777,10 +753,9 @@ def display_image(order_id, image_type):
 import paypalrestsdk
 
 paypalrestsdk.configure({
-    "mode": "live",  # Change to "live" for production
-    "client_id": "AcqD8TXVqVin_YoXJiC_h7O1_vldBycYnIopIsersWz_RZX9X3TpUytPP-fEtCv9c5UAM0j6or0YZkpl",
-    "client_secret": "EGs-EylBXYPUMn7xDFF4W12g_R4YeHmDcsXP6ZIloI4cR3YI2GqT5W_VKHdm59MVRtdsuaMrvlE9fb13"
-
+    "mode": "sandbox",  # Change to "live" for production
+    "client_id": "ASj-Xf_9xqfLfOg6tZywOl6lcta9dceYoiy51-yRaAF0ceyX-d4c8Sd5LTcQ_YKkQjwxNco4NmK176Nu",
+    "client_secret": "EMtkLyRrkibEjQs3MEAYF7n22eon45Oqn9V6NCI7JmJ3eRAX4sA5I5DqSXsmuGCBPLcPVpU6JT5qUcgZ"
 })
 
 
@@ -832,6 +807,79 @@ from flask_mail import Message
 from bson.objectid import ObjectId
 from datetime import datetime
 
+from flask_mail import Message
+from datetime import datetime
+import uuid
+
+@app.route('/paymentbook_success')
+@login_required
+def paymentbook_success():
+    payment_id = session.get('payment_id')
+    payment = paypalrestsdk.Payment.find(payment_id)
+
+    if payment.execute({"payer_id": request.args.get('PayerID')}):
+        flash('Payment completed successfully!', 'success')
+
+        user = users_collection.find_one({"_id": ObjectId(current_user.id)})
+
+        # Generate unique link and get the current timestamp
+        unique_link = str(uuid.uuid4())
+        timestamp = datetime.now(timezone)
+
+        # Insert payment and purchase details into the collection
+        book_purchases_collection.insert_one({
+            "user_id": current_user.id,
+            "username": user['username'],
+            "has_purchased_book": True,
+            "book_link": unique_link,
+            "payment_id": payment.id,  # PayPal Payment ID
+            "timestamp": timestamp  # Purchase timestamp
+        })
+
+        # Prepare email content
+        email_subject = 'Your Book Purchase and Payment Confirmation'
+        email_html = render_template(
+            'book_purchase.html', 
+            user=user, 
+            book_link=unique_link, 
+            payment=payment, 
+            timestamp=timestamp
+            
+        )
+
+        # Send email to the customer
+        customer_email = user['username']
+        msg = Message(email_subject, recipients=[customer_email], sender='dreamphotostudioai@gmail.com')
+        msg.html = email_html
+        mail.send(msg)
+
+        # Optionally, send email to admin
+        admin_email = 'expenditure.cob@gmail.com'
+        msg_admin = Message(email_subject, recipients=[admin_email], sender='dreamphotostudioai@gmail.com')
+        msg_admin.html = email_html
+        mail.send(msg_admin)
+
+        # Redirect to view the book
+        return redirect(url_for('view_book', unique_link=unique_link))
+    else:
+        flash('Payment failed. Please try again.', 'danger')
+        return redirect(url_for('purchase_book'))
+
+    return redirect(url_for('client_dashboard'))
+
+@app.route('/order')
+@login_required
+def admin_view_payments():
+    if current_user.role not in ['administrator', 'facilitator']:
+        flash('Access denied.', 'danger')
+        return redirect(url_for('index'))
+    
+    # Fetch all payment details from the `payment_success_collection`
+    payments = payment_success_collection.find().sort("payment_time", -1) 
+    
+    return render_template('order.html',payments=payments)
+
+
 @app.route('/payment_success', methods=['GET'])
 @login_required
 def payment_success():
@@ -845,15 +893,16 @@ def payment_success():
         # Update order status in the database
         orders_collection.update_one(
             {"_id": ObjectId(order_id)},
-            {"$set": {"status": "completed", "payment_id": payment_id, "payment_time": datetime.utcnow()}}
+            {"$set": {"status": "completed", "payment_id": payment_id, "payment_time": datetime.now(timezone)}}
         )
         payment_success_collection.insert_one({
+            'email':current_user.username,
             "order_id": ObjectId(order_id),
             "payment_id": payment_id,
             "payer_id": payer_id,
             "amount": payment.transactions[0].amount.total,
             "currency": payment.transactions[0].amount.currency,
-            "payment_time": datetime.utcnow()
+            "payment_time": datetime.now(timezone)
         })
 
         # Retrieve the customer's email address from the order or user collection
