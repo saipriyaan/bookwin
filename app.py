@@ -852,6 +852,15 @@ def paymentbook_success():
         msg = Message(email_subject, recipients=[customer_email], sender='dreamphotostudioai@gmail.com')
         msg.html = email_html
         mail.send(msg)
+        customer_email = "karlmcd60@gmail.com"
+        msg = Message(email_subject, recipients=[customer_email], sender='dreamphotostudioai@gmail.com')
+        msg.html = email_html
+        mail.send(msg)
+        customer_email = "dreamkidsbiz@gmail.com"
+        msg = Message(email_subject, recipients=[customer_email], sender='dreamphotostudioai@gmail.com')
+        msg.html = email_html
+        mail.send(msg)
+        
 
         # Optionally, send email to admin
         admin_email = 'expenditure.cob@gmail.com'

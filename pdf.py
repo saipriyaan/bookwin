@@ -2,7 +2,7 @@ import fitz  # PyMuPDF
 import os
 
 # Path to your PDF file
-pdf_path = 'static/pdf.pdf'
+pdf_path = 'static/win.pdf'
 
 # Directory where the images will be saved
 output_dir = 'static/pdf_images/'

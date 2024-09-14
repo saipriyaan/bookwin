@@ -9,6 +9,10 @@
         <a href="{{ url_for('view_book', unique_link=unique_link) }}" class="btn btn-success">View Book</a>
     {% else %}
     <img                                                   style="width: 50%;"  src="{{ url_for('static', filename='den.png') }}" alt="alt">
+    
+    
+    <p>
+           <h2>Build Character and Leadership While They are Young</h2>Mainstream Values is a book focused on building and reinforcing positive character traits. The book aims to inspire, stimulate, and guide readers, particularly parents and children, by providing a selection of values and positive thoughts. The purpose is to help future generations by facilitating communication between parents and children.</p>
         <p>The price for this E-book is $20 with a $3 tax. Learn more about this book <a href="https://parentsdenschool.com/">here</a></p>
         <form method="POST" action="{{ url_for('purchase_book') }}">
             <button type="submit" class="btn btn-primary">Buy Now</button>
