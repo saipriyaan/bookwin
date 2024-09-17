@@ -1,7 +1,41 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
 <div class="container">
+    <style>
+        /* Style for the form container */
+        form {
+            display: flex;
+            justify-content: center; /* Center the button horizontally */
+            margin: 20px; /* Add margin around the form */
+        }
+        
+        /* Style for the button */
+        .btn-primary {
+            background-color: #007bff; /* Primary button color */
+            color: white; /* Text color */
+            border: none; /* Remove default border */
+            padding: 10px 20px; /* Padding for button */
+            font-size: 16px; /* Font size */
+            font-weight: bold; /* Bold text */
+            border-radius: 5px; /* Rounded corners */
+            transition: background-color 0.3s, transform 0.2s; /* Smooth transitions */
+            cursor: pointer; /* Pointer cursor on hover */
+        }
+        
+        /* Button hover state */
+        .btn-primary:hover {
+            background-color: #0056b3; /* Darker shade of primary color on hover */
+            transform: scale(1.05); /* Slightly enlarge button on hover */
+        }
+        
+        /* Button active state */
+        .btn-primary:active {
+            background-color: #004080; /* Even darker shade when button is clicked */
+            transform: scale(0.98); /* Slightly shrink button on click */
+        }
+        </style>
     <h2>Purchase E-book</h2>
     
     {% if has_purchased %}
@@ -13,8 +47,55 @@
     
     <p>
            <h2>Build Character and Leadership While They are Young</h2>Mainstream Values is a book focused on building and reinforcing positive character traits. The book aims to inspire, stimulate, and guide readers, particularly parents and children, by providing a selection of values and positive thoughts. The purpose is to help future generations by facilitating communication between parents and children.</p>
-        <p>The price for this E-book is $20 with a $3 tax. Learn more about this book <a href="https://parentsdenschool.com/">here</a></p>
-        <form method="POST" action="{{ url_for('purchase_book') }}">
+        <p>The price for this E-book is $20 with a $3 tax. Learn more about this book <a href="https://parentsdenschool.com/">here</a>
+            
+            <h2>INTRODUCTION</h2>
+
+            The Parents Den <bold> "AKA Mainstream Values" </bold> is a character building and reinforcing book of values. My purpose for recording this random selection of useful values and positive thoughts is to help inspire, stimulate and guide readers in ways that might help them and future generations.
+            
+            Readers will also  most likely notice that I have provided several reoccurring themes that have stated in slightly different ways. These themes are most likely the ones that felt were particularly useful.
+                                                                                                               Below are a few example for parents to go over with there child.
+                                                                                                               <br>
+                                                                                                                                                                         <h3>     " The Parents  Den workshop"  </h3>  
+                                                                                                                                                                            
+                                                                                                                                                                                <br>
+                                                                                                                     
+                                                                                                                 We have up to 200 themes for the parents to discuss with their children <br>
+            
+            1) Be Honest
+    <br>
+            
+            2) Learn to appreciate the things that you already have; because in many cases , you already have the things you really need.
+    <br>       
+            3) Protect and guard your good name and reputation. They will follow you. So do not let them haunt you. They should be your friends not your enemies.
+    <br>        
+            4) Talk is cheap. Action is better
+        <br>    
+            5) Be a community asset, not a liability .
+          <br>  
+            6) Learn to discipline your self so that other will not have to do it for you.
+     <br>       
+            7) Knowledge is power
+            
+         <br>                          
+                       Parents should go over the values  and allow the child to explain them! This is one of the best decision parent workshop between a parent and their children.
+            Let's prevent kids growing up like this <p> 
+                <img src="{{url_for('static',filename='win1.png')}}" alt="alt">
+                <img src="{{url_for('static',filename='win2.png')}}" alt="alt">
+                <img src="{{url_for('static',filename='win3.png')}}" alt="alt">
+                <img src="{{url_for('static',filename='win4.png')}}" alt="alt">
+                <img src="{{url_for('static',filename='win5.png')}}" alt="alt">
+                <img src="{{url_for('static',filename='win6.png')}}" alt="alt">
+
+
+
+
+
+
+
+                                                                                                                                
+                                                                                                                                
+        <form method="POST" action="{{ url_for('purchase_boo') }}">
             <button type="submit" class="btn btn-primary">Buy Now</button>
         </form>
     {% endif %}

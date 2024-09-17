@@ -19,10 +19,7 @@ from flask import Flask, render_template
 from pdf2image import convert_from_path
 import pytz
 
-# Set the timezone to Eastern Time (ET)
-timezone = pytz.timezone('US/Eastern')
 
-# Get the current time in UTC
 
 app = Flask(__name__)
 import uuid
@@ -33,7 +30,7 @@ login_manager.login_view = 'login'
 
 # MongoDB Atlas Connection
 client = MongoClient("mongodb+srv://sai:8778386853@cluster0.9vhjs.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
-db = client['drawing_business']
+db = client['bookpurchase']
 book_purchases_collection = db['book_purchases'] 
 users_collection = db['users']
 orders_collection = db['orders']
@@ -60,7 +57,7 @@ API_VERSION = 'v3'
 
 from flask_login import current_user
 
-@app.route('/')
+@app.route('/none')
 def index():
     client_logged_in = current_user.is_authenticated  # Check if user is logged in
     return render_template('index.html', client_logged_in=client_logged_in)
@@ -166,7 +163,7 @@ def signup():
 def contact():
     management_team = [
         {"name": "Sherwood Ballard",'telephone':'1-800-389-0917' ,"email": "dreamkidsbiz@gmail.com", "position": "Manager"},
-        {"name": "Sai Priyan J K", "email": "expenditure.cob@gmail.com", "position": "Technical Lead"},
+        {"name": "Sai Priyan J K", "email": "", "position": "Technical Lead"},
    
     ]
 
@@ -192,9 +189,9 @@ def contact():
 
     return render_template('contact.html', management_team=management_team)
 
-@app.route('/purchase_book', methods=['GET', 'POST'])
+@app.route('/purchase', methods=['GET', 'POST'])
 @login_required
-def purchase_book():
+def purchase_boo():
     
     purchase_record = book_purchases_collection.find_one({"user_id": current_user.id})
 
@@ -240,14 +237,14 @@ def purchase_book():
                     return redirect(approval_url)
         else:
             flash('An error occurred with PayPal payment.', 'danger')
-            return redirect(url_for('purchase_book'))
+            return redirect(url_for('purchase_boo'))
 
     return render_template('purchase_book.html', has_purchased=False)
 
 
-@app.route('/purchase_book_check')
+@app.route('/purchase_boo_check')
 @login_required
-def purchase_book_check():
+def purchase_boo_check():
     purchase_record = book_purchases_collection.find_one({"user_id": current_user.id})
 
     if purchase_record and purchase_record.get('has_purchased_book'):
@@ -280,7 +277,7 @@ import uuid
 @login_required
 def paymentbook_cancel():
     flash('Payment was cancelled.', 'warning')
-    return redirect(url_for('purchase_book'))
+    return redirect(url_for('purchase_boo'))
 
 # View book route
 @app.route('/view_book/<unique_link>')
@@ -292,7 +289,7 @@ def view_book(unique_link):
         return render_template('view_pdf.html')  
     else:
         flash('You do not have access to view this book.', 'danger')
-        return redirect(url_for('purchase_book'))
+        return redirect(url_for('purchase_boo'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -314,7 +311,7 @@ def login():
 
             # Redirect based on user role
             if user_obj.role == 'client':
-                return redirect(url_for('client_dashboard'))
+                return redirect(url_for('purchase_boo'))
             else:
                 return redirect(url_for('admin_facilitator_dashboard'))
 
@@ -498,7 +495,7 @@ def place_order():
             mail.send(msg)
             msg = Message('New Order',
                           sender='dreamphotostudioai@gmail.com',
-                          recipients=["expenditure.cob@gmail.com","dreamkidsbiz@gmail.com"])
+                          recipients=["","dreamkidsbiz@gmail.com"])
             msg.html = email_html
             mail.send(msg)
 
@@ -647,7 +644,7 @@ def chat(order_id):
             order = orders_collection.find_one({"_id": ObjectId(order_id)})
             if order:
                 client_email = order.get('username')  # Assuming this is the client email
-                admin_email = 'expenditure.cob@gmail.com'
+                admin_email = ''
                 uploaded_by_id = order.get('uploaded_by')
                 
                 # Convert uploaded_by_id to ObjectId if needed
@@ -862,8 +859,8 @@ def paymentbook_success():
         mail.send(msg)
         
 
-        # Optionally, send email to admin
-        admin_email = 'expenditure.cob@gmail.com'
+
+        admin_email = 'dreamphotostudioai@gmail.com'
         msg_admin = Message(email_subject, recipients=[admin_email], sender='dreamphotostudioai@gmail.com')
         msg_admin.html = email_html
         mail.send(msg_admin)
@@ -872,7 +869,7 @@ def paymentbook_success():
         return redirect(url_for('view_book', unique_link=unique_link))
     else:
         flash('Payment failed. Please try again.', 'danger')
-        return redirect(url_for('purchase_book'))
+        return redirect(url_for('purchase_boo'))
 
     return redirect(url_for('client_dashboard'))
 
@@ -927,7 +924,7 @@ def payment_success():
         msg = Message(email_subject, recipients=[customer_email],sender='dreamphotostudioai@gmail.com')
         msg.html = email_html
         mail.send(msg)
-        msg = Message(email_subject, recipients=["expenditure.cob@gmail.com","dreamkidsbiz@gmail.com"] ,sender='dreamphotostudioai@gmail.com')
+        msg = Message(email_subject, recipients=["","dreamkidsbiz@gmail.com"] ,sender='dreamphotostudioai@gmail.com')
         msg.html = email_html
         mail.send(msg)
 
