@@ -5,105 +5,182 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Dream Photo AI{% endblock %}</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #e0f7fa;
+        /* Universal Reset */
+        * {
             margin: 0;
             padding: 0;
-            transition: background-color 0.5s ease;
+            box-sizing: border-box;
         }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4e8c1; /* Light sandal color */
+            margin: 0;
+            padding: 0;
+            color: #3a3a3a;
+            transition: background-color 1s ease, color 0.6s ease;
+        }
+
         header {
-            background:  #68edff;
-            color: white;
+            background: #ffcc80; /* Sandal toned header */
+            color: #5d4037; /* Warm brown for text */
             padding: 20px;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(255, 0, 0, 0.2);
-            transition: background 0.5s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            animation: slideDown 1s ease-in-out;
         }
+
         header h1 {
             margin: 0;
-            font-size: 2.5rem;
-            font-weight: 700;
+            font-size: 3rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            animation: popIn 1s ease-in-out 0.5s forwards;
+            opacity: 0;
         }
+
+        .auth-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .auth-links a {
+            font-size: 1rem;
+            color: #ffffff;
+            font-size: 30px;
+    
+        
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .auth-links a:hover {
+            color: #e9bb24;
+            transform: scale(1.05);
+        }
+
         nav {
-            background:#8cf2ff;
+            background: #ffe0b2;
             padding: 15px;
             text-align: center;
-            transition: background 0.5s ease;
+            transition: background 1s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
         }
+
         nav a {
-            color: rgb(0, 0, 0);
+            color: #5d4037;
             margin: 0 20px;
             text-decoration: none;
             font-size: 1.2rem;
-            transition: color 0.3s ease, transform 0.3s ease;
+         
+
         }
-        nav a:hover {
-            color: #ffeb3b;
-            transform: scale(1.1);
-        }
+
         .container {
-            width: 80%;
-            margin: 30px auto;
-            padding: 30px;
+            width: 90%;
+            margin: 40px auto;
+            padding: 40px;
             background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-            transition: box-shadow 0.3s ease, transform 0.3s ease;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            animation: fadeInUp 1.2s ease-in-out;
         }
-        .container:hover {
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            transform: translateY(-5px);
-        }
+
         .alert {
-            padding: 20px;
+            padding: 15px;
             margin-bottom: 20px;
-            border-radius: 8px;
+            border-radius: 10px;
             color: white;
-            transition: opacity 0.5s ease, transform 0.3s ease;
-            transform: scale(1);
+            transform: scale(0.95);
+            opacity: 0;
+            animation: fadeAndGrow 0.6s forwards;
         }
+
         .alert-success {
-            background: #4caf50;
+            background: #81c784;
         }
+
         .alert-danger {
-            background: #f44336;
+            background: #e57373;
         }
+
         .alert:hover {
             transform: scale(1.02);
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeAndGrow {
+            0% {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideDown {
+            0% {
+                transform: translateY(-100%);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes popIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.7);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
     </style>
 </head>
 <body>
     <header>
         <h1>Purchase Book</h1>
+        <div class="auth-links">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+                <a href="{{ url_for('signup') }}">Sign Up</a>
+                <a href="{{ url_for('login') }}">Login</a>
+            {% endif %}
+        </div>
     </header>
     <nav>
         {% if current_user.is_authenticated %}
             {% if current_user.role != 'client' %}
                 <a href="{{ url_for('admin_facilitator_dashboard') }}">Admin/Facilitator Dashboard</a>
-                <a href="{{ url_for('booksale') }}">Parentden(sale)</a>
-                <a href="{{ url_for('order') }}">Order(sale)</a>
+                <a href="{{ url_for('booksale') }}">Parentden (Sale)</a>
+                <a href="{{ url_for('order') }}">Order (Sale)</a>
             {% endif %}
-         
-            {% if current_user.role == 'client' %}
-       
-            {% endif %}
-            
-            <a href="{{ url_for('purchase_boo') }}">ParentDen Book</a>
-            
-            <a href="{{ url_for('logout') }}">Logout</a>
-        {% else %}
-            <a href="{{ url_for('signup') }}">Sign Up</a>
-            <a href="{{ url_for('login') }}">Login</a>
 
-           
+            {% if current_user.role == 'client' %}
+                <!-- Client specific links can go here -->
+            {% endif %}
+
+            <a href="{{ url_for('purchase_boo') }}">ParentDen Book</a>
         {% endif %}
     </nav>
     <div class="container">
-
-
-
         {% with messages = get_flashed_messages(with_categories=True) %}
             {% if messages %}
                 {% for category, message in messages %}

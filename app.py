@@ -57,70 +57,11 @@ API_VERSION = 'v3'
 
 from flask_login import current_user
 
-@app.route('/none')
+@app.route('/')
 def index():
     client_logged_in = current_user.is_authenticated  # Check if user is logged in
-    return render_template('index.html', client_logged_in=client_logged_in)
+    return render_template('purchase_book.html', client_logged_in=client_logged_in)
 
-
-def get_credentials():
-    credentials_data = tokens.find_one({"client_secret": "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"})
-    print(credentials_data,'the files is ')
-    if credentials_data:
-        
-        credentials = Credentials(
-        token=credentials_data['token'],
-        refresh_token=credentials_data['refresh_token'],
-        token_uri=credentials_data['token_uri'],
-        client_id=credentials_data['client_id'],
-        client_secret=credentials_data['client_secret'],
-        scopes=credentials_data['scopes']
-    )
-        # credentials = google.oauth2.credentials.Credentials(**token_data["token"])
-        # flash('Please authorize the application through the provided link.', 'success')
-    else:
-        flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES)
-        flow.redirect_uri = url_for('oauth2callback', _external=True)
-        authorization_url, _ = flow.authorization_url(access_type='offline')
-        flash('Please authorize the application through the provided link.', 'danger')
-        return redirect(authorization_url)
-    return credentials
-
-@app.route('/oauth2callback')
-def oauth2callback():
-    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES)
-    flow.redirect_uri = url_for('oauth2callback', _external=True)
-
-    authorization_response = request.url
-
-    flow.fetch_token(authorization_response=request.url)
-    
-
-    credentials = flow.credentials
-    tokens_collection.update_one(
-        {"_id": "google_drive_token"},
-        {"$set": {"token": credentials_to_dict(credentials)}},
-        upsert=True
-    )
-
-    print('Authorization successful.', 'success')
-    return redirect(url_for('index'))
-
-
-# @app.route('/view_pdf')
-# def view_pdf():
-#     # Render the HTML page that displays the PDF
-#     return render_template('view_pdf.html')
-
-def credentials_to_dict(credentials):
-    return {
-        'token': credentials.token,
-        'refresh_token': credentials.refresh_token,
-        'token_uri': credentials.token_uri,
-        'client_id': credentials.client_id,
-        'client_secret': credentials.client_secret,
-        'scopes': credentials.scopes
-    }
 
 class User(UserMixin):
     def __init__(self, user_id, username, role):
