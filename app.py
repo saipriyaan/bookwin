@@ -198,7 +198,7 @@ from flask_login import current_user
 @app.route('/book_sales')
 @login_required
 def booksale():
-    # Check if the current user is an admin (you can adjust this based on your user role system)
+
     if current_user.role != 'administrator':
         flash('You are not authorized to view this page.', 'danger')
         return redirect(url_for('index'))

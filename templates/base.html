@@ -191,13 +191,13 @@
     <nav>
         {% if current_user.is_authenticated %}
             {% if current_user.role != 'client' %}
-                <a href="{{ url_for('admin_facilitator_dashboard') }}">Admin/Facilitator Dashboard</a>
+  
                 <a href="{{ url_for('booksale') }}">Parentden (Sale)</a>
-                <a href="{{ url_for('order') }}">Order (Sale)</a>
+    
             {% endif %}
 
             {% if current_user.role == 'client' %}
-                <!-- Client specific links can go here -->
+
             {% endif %}
 
             <a href="{{ url_for('purchase_boo') }}">ParentDen Book</a>
