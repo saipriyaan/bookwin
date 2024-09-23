@@ -30,7 +30,7 @@ login_manager.login_view = 'login'
 
 # MongoDB Atlas Connection
 client = MongoClient("mongodb+srv://sai:8778386853@cluster0.9vhjs.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
-db = client['bookpurchase']
+db = client['drawing_business']
 book_purchases_collection = db['book_purchases'] 
 users_collection = db['users']
 orders_collection = db['orders']
