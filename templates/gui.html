@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buy Guide | DreamPhoto.Shop</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 50px 20px;
+            min-height: 100vh;
+            text-align: center;
+            position: relative;
+            transition: transform 0.8s ease-in-out;
+        }
+
+        .step {
+            background-color: #007BFF;
+            color: white;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            font-weight: bold;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .content {
+            margin-top: 30px;
+            max-width: 700px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #007BFF;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: #555;
+        }
+
+        .buy-now-btn {
+            display: inline-block;
+            background-color: #FF5722;
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .buy-now-btn:hover {
+            background-color: #e64a19;
+        }
+
+        .circle-connect {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: #FF5722;
+            border-radius: 50%;
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+            animation: pulse 2s infinite;
+            z-index: 1;
+        }
+
+        .connector-line {
+            width: 3px;
+            height: 400px;
+            background-color: #FF5722;
+            position: absolute;
+            z-index: 0;
+        }
+
+        .connector-line:nth-child(odd) {
+            transform: translateX(-400px);
+        }
+
+        /* Scroll animation */
+        .animate {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.6s, transform 0.6s;
+        }
+
+        .animate.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Circle Animation */
+        @keyframes pulse {
+            0% {
+                transform: scale(0.9);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(0.9);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Step 1 -->
+        <div class="section" id="step1">
+            <div class="circle-connect" style="top: 10%; left: 50%;"></div>
+            <div class="connector-line" style="top: 100px; left: 50%;"></div>
+            <div class="step animate visible">1</div> <!-- Step 1 is initially visible -->
+            <div class="content animate visible"> <!-- Step 1 content is also visible by default -->
+                <h1>Create an Account</h1>
+                <p>If you don't have an account yet, create one now. If you’re a DreamPhoto.Shop user, you can log in with the same credentials.</p>
+                <a href="/signup"  class="buy-now-btn">Create a free account</a>
+            </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="section" id="step2">
+            <div class="circle-connect" style="top: 50%; left: 50%;"></div>
+            <div class="connector-line" style="top: 100px; left: 50%;"></div>
+            <div class="step animate" style="background-color: #FFC107;">2</div>
+            <div class="content animate">
+                <h1>Log In</h1>
+                <p>Log in using your newly created account or your existing DreamPhoto.Shop login details.</p>
+                <a href="/login" class="buy-now-btn">Login</a>
+            </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="section" id="step3">
+            <div class="circle-connect" style="top: 90%; left: 50%;"></div>
+            <div class="connector-line" style="top: 100px; left: 50%;"></div>
+            <div class="step animate" style="background-color: #8BC34A;">3</div>
+            <div class="content animate">
+                <h1>Buy Your Book</h1>
+                <p>Choose your book, click "Buy Now," and complete the payment process.</p>
+                <a href="/purchase" class="buy-now-btn">Buy Now</a>
+            </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="section" id="step4">
+            <div class="circle-connect" style="top: 130%; left: 50%;"></div>
+            <div class="step animate" style="background-color: #FF5722;">4</div>
+            <div class="content animate">
+                <h1>Read the eCopy</h1>
+                <p>Once you've completed the purchase, the book will be available in your account to read instantly!</p>
+                <a href="/purchase" class="buy-now-btn">Read</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Scroll Animation Script
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('.animate');
+            const windowHeight = window.innerHeight;
+            sections.forEach(section => {
+                const elementTop = section.getBoundingClientRect().top;
+                if (elementTop < windowHeight - 100) {
+                    section.classList.add('visible');
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
+{% endblock %}

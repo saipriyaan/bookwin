@@ -61,6 +61,10 @@ from flask_login import current_user
 def index():
     client_logged_in = current_user.is_authenticated  # Check if user is logged in
     return render_template('purchase_book.html', client_logged_in=client_logged_in)
+@app.route('/guide')
+def guide():
+    client_logged_in = current_user.is_authenticated  # Check if user is logged in
+    return render_template('gui.html', client_logged_in=client_logged_in)
 
 
 class User(UserMixin):
