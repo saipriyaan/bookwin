@@ -181,8 +181,11 @@
 
         <div class="auth-links">
             {% if current_user.is_authenticated %}
+            <a href="{{ url_for('guide') }}">Guide</a>
                 <a href="{{ url_for('logout') }}">Logout</a>
+            
             {% else %}
+                    
             <a href="{{ url_for('guide') }}">Guide</a>
 
                 <a href="{{ url_for('signup') }}">Sign Up</a>
