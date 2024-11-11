@@ -303,7 +303,7 @@ def purchase_boo():
                     "items": [{
                         "name": "E-book",
                         "sku": "001",
-                        "price": "23.00",
+                        "price": "30.00",
                         "currency": "USD",
                         "quantity": 1
                     }]
