@@ -178,7 +178,8 @@ svg {
     </svg>
 
     <p>Redirecting to the purchase page...</p>
-    <script>gsap.set('svg', {
+    <script>
+    gsap.set('svg', {
 	visibility: 'visible'
 })
 gsap.set('.dot', {
@@ -280,5 +281,13 @@ gsap.to('.outline', {
 }).seek(200)
  
 </script>
+
+
+
+
+   <script>
+        // Automatically submit the form when the page loads
+        document.getElementById('postRedirectForm').submit();
+    </script>
 </body>
 </html>
