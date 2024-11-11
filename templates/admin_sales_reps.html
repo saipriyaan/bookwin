@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Sales Reps List{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Sales Reps</h2>
+    
+    <table style="width: 100%; border-collapse: collapse; margin: 25px 0; font-size: 1.1rem; text-align: left; border-radius: 10px; overflow: hidden; box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);">
+        <thead>
+            <tr style="background-color: #68edff; color: white; text-align: center; font-weight: bold;">
+                <th style="padding: 12px 15px;">Rep Name</th>
+                <th style="padding: 12px 15px;">Rep Code</th>
+                <th style="padding: 12px 15px;">Balance</th>
+                <th style="padding: 12px 15px;">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for rep in sales_reps %}
+            <tr style="border-bottom: 1px solid #dddddd;">
+                <td style="padding: 12px 15px;">{{ rep['name'] }}</td>
+                <td style="padding: 12px 15px;">{{ rep['rep_code'] }}</td>
+                <td style="padding: 12px 15px;">${{ rep['balance'] }}</td>
+                <td style="padding: 12px 15px; text-align: center;">
+                    <a href="{{ url_for('admin_sales_rep_detail', rep_id=rep['_id']) }}" style="padding: 6px 12px; background-color: #4caf50; color: white; text-decoration: none; border-radius: 5px;">View Details</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

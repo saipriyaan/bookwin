@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Sales Rep Login{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Sales Representative Login</h2>
+    <form action="{{ url_for('sales_rep_login') }}" method="POST">
+        <div style="margin-bottom: 15px;">
+            <label for="email">Email:</label><br>
+            <input type="email" id="email" name="email" required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label for="password">Password:</label><br>
+            <input type="password" id="password" name="password" required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
+        </div>
+        <div style="margin-bottom: 15px; text-align: center;">
+            <button type="submit" style="padding: 10px 20px; background-color: #68edff; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1.2rem;">
+                Login
+            </button>
+        </div>
+        <p>Don't have an account? <a href="{{ url_for('sales_rep_signup') }}" style="color: #68edff; text-decoration: none;">Sign Up</a></p>
+    </form>
+</div>
+{% endblock %}

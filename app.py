@@ -18,7 +18,7 @@ import os
 from flask import Flask, render_template
 from pdf2image import convert_from_path
 import pytz
-
+timezone = pytz.timezone('US/Eastern')
 
 
 app = Flask(__name__)
@@ -43,8 +43,8 @@ queries_collection = db['queries']
 # Flask-Mail Configuration
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
-app.config['MAIL_USERNAME'] = "dreamphotostudioai@gmail.com"
-app.config['MAIL_PASSWORD'] = "yqvubyeyuegpapgv"
+app.config['MAIL_USERNAME'] = "serviceemailshop@gmail.com"
+app.config['MAIL_PASSWORD'] = "ukdqyqjvqepfeuad"
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 mail = Mail(app)
@@ -65,6 +65,25 @@ def index():
 def guide():
     client_logged_in = current_user.is_authenticated  # Check if user is logged in
     return render_template('gui.html', client_logged_in=client_logged_in)
+
+@app.route('/broker_form', methods=['GET', 'POST'])
+def broker_form():
+    if request.method == 'POST':
+        broker_id = request.form.get('brokerId')
+        if broker_id:
+            session['broker_id'] = broker_id
+            # Render a template that contains a form to redirect as a POST
+            return render_template('redirect_form.html')
+        else:
+            # Render the form template for the "no broker ID" case
+            return render_template('redirect_form.html')
+    return render_template('broker_form.html')
+
+@app.route('/salerepcheck', methods=['GET', 'POST'])
+@login_required
+def salerepcheck():
+    client_logged_in = current_user.is_authenticated  # Check if user is logged in
+    return render_template('brokerid.html', client_logged_in=client_logged_in)
 
 
 class User(UserMixin):
@@ -133,7 +152,130 @@ def contact():
         return redirect(url_for('contact'))
 
     return render_template('contact.html', management_team=management_team)
+# Sales Rep Collection
+sales_rep_col = db['sales_bookreps']
+payment_logs_col = db['payment_logs']
 
+@app.route('/sales_rep_signup', methods=['GET', 'POST'])
+def sales_rep_signup():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        password = request.form['password']
+        ph = request.form['phone']
+        com = request.form['com']
+        
+        # Generate a unique rep code
+        rep_code = str(uuid.uuid4())[:8]
+        
+        # Check if email already exists
+        if sales_rep_col.find_one({'email': email}):
+            flash('Email already registered. Please log in.', 'danger')
+            return redirect(url_for('sales_rep_signup'))
+        
+        # Create a new sales rep
+        new_rep = {
+            'name': name,
+            'email': email,
+            'password': password,
+            'phone':ph,
+            
+            'com':com,
+            'rep_code': rep_code,
+            'balance': 0.0
+        }
+        
+        sales_rep_col.insert_one(new_rep)
+        flash('Sales rep account created successfully! Your rep code is: ' + rep_code, 'success')
+        return redirect(url_for('sales_rep_login'))
+    
+    return render_template('sales_rep_signup.html')
+
+@app.route('/sale',methods=['GET','POST'])
+def sale():
+    return render_template("promotion.html")
+
+@app.route('/about',methods=['GET','POST'])
+def about():
+    return render_template("about.html")
+@app.route('/sales_rep_login', methods=['GET', 'POST'])
+def sales_rep_login():
+
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        
+        rep = sales_rep_col.find_one({'email': email})
+        
+        if rep and rep['password']== password:
+            session['rep_id'] = str(rep['_id'])
+            print(str(rep['_id']))
+            session['rep_code'] = rep['rep_code']
+            return redirect(url_for('sales_rep_dashboard'))
+        else:
+            flash('Invalid credentials.', 'danger')
+    
+    return render_template('sales_rep_login.html')
+
+@app.route('/admin/sales_reps', methods=['GET'])
+@login_required
+def admin_sales_reps():
+    if current_user.role != 'administrator':
+        return redirect(url_for('index'))
+    
+    sales_reps = sales_rep_col.find()
+    return render_template('admin_sales_reps.html', sales_reps=sales_reps)
+
+@app.route('/admin/sales_rep/<rep_id>', methods=['GET', 'POST'])
+@login_required
+def admin_sales_rep_detail(rep_id):
+    if current_user.role != "administrator":
+        return redirect(url_for('index'))
+
+    sales_rep = sales_rep_col.find_one({"_id": ObjectId(rep_id)})
+    payment_logs = payment_logs_col.find({"rep_code": ObjectId(rep_id)})
+    
+    
+
+
+    if request.method == 'POST':
+        adjustment_amount = float(request.form['adjustment_amount'])
+        adjustment_amount = -adjustment_amount
+        sales_rep_col.update_one(
+            {"_id": ObjectId(rep_id)},
+            {"$inc": {"balance": adjustment_amount}}
+        )
+        
+        # Log the adjustment
+        payment_logs_col.insert_one({
+            "rep_code": ObjectId(rep_id),
+            "amount": adjustment_amount,
+            "payment_id":"Cleared",
+            "admin": current_user.username,
+            "timestamp": datetime.now(timezone)
+        })
+        
+        flash("Balance updated successfully", "success")
+        return redirect(url_for('admin_sales_rep_detail', rep_id=rep_id))
+    
+    return render_template('admin_sales_rep_detail.html', sales_rep=sales_rep, logs=list(payment_logs))
+
+
+
+
+@app.route('/sales_rep_dashboard')
+
+def sales_rep_dashboard():
+    if 'rep_id' not in session:
+        flash('Please log in to access the dashboard.', 'danger')
+        return redirect(url_for('sales_rep_login'))
+    print(session['rep_id'])
+    
+    rep = sales_rep_col.find_one({'_id':  ObjectId(session['rep_id'])})
+    payment_logs =list( payment_logs_col.find({'rep_code': ObjectId(session['rep_id'])}))
+    print(rep)
+    
+    return render_template('sales_rep_dashboard.html', rep=rep, logs=payment_logs)
 @app.route('/purchase', methods=['GET', 'POST'])
 @login_required
 def purchase_boo():
@@ -809,6 +951,26 @@ def paymentbook_success():
         msg_admin = Message(email_subject, recipients=[admin_email], sender='dreamphotostudioai@gmail.com')
         msg_admin.html = email_html
         mail.send(msg_admin)
+        sale=session.get('broker_id')
+        print(sale)
+        
+
+        if sale:
+            payment_logs_col.insert_one({
+            'email':current_user.username,
+            "user_id": ObjectId(current_user.id),
+            "payment_id": payment_id,
+            "amount": payment.transactions[0].amount.total,
+            "currency": payment.transactions[0].amount.currency,
+            "payment_time": datetime.now(timezone),
+
+            'rep_code':sale
+
+        })
+            sales_rep_col.update_one(
+        {'_id': sale},
+        {'$inc': {'balance': 5}}
+    )
 
         # Redirect to view the book
         return redirect(url_for('view_book', unique_link=unique_link))
@@ -884,7 +1046,11 @@ def payment_cancelled():
     flash('Payment cancelled.', 'warning')
     return redirect(url_for('client_dashboard'))
 
-
+@app.route('/logout_salerep')
+def logout_se():
+    session.clear()
+    flash('Logged out successfully.', 'success')
+    return redirect(url_for('sales_rep_login'))
 
 def get_image_url_from_storage(image_id):
     # Construct the image URL (example for Google Drive)
@@ -893,3 +1059,4 @@ if __name__ == '__main__':
     import os 
     os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
     app.run(debug=True)
+

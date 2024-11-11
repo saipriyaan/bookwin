@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Sales Rep Details{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Details for {{ sales_rep['name'] }}</h2>
+    <p><strong>Rep Code:</strong> {{ sales_rep['rep_code'] }}</p>
+    <p><strong>Rep Code:</strong> {{ sales_rep['com'] }}</p>
+    <p><strong>Balance:</strong> ${{ sales_rep['ph'] }}</p>
+    <p><strong>Balance:</strong> ${{ sales_rep['balance'] }}</p>
+
+    <h3>Adjust Balance</h3>
+    <form method="POST">
+        <label for="adjustment_amount">Clear Payment:</label>
+        
+        <input type="number" step="0.01" id="adjustment_amount" name="adjustment_amount" required>
+        <button type="submit" style="padding: 8px 16px; background-color: #4caf50; color: white; border: none; border-radius: 5px; margin-top: 10px;">Submit</button>
+    </form>
+    
+    <h3>Payment Logs:</h3>
+    <table style="width: 100%; border-collapse: collapse; margin: 25px 0; font-size: 1.1rem; text-align: left; border-radius: 10px; overflow: hidden; box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);">
+        <thead>
+            <tr style="background-color: #68edff; color: white; text-align: center; font-weight: bold;">
+                <th style="padding: 12px 15px;">Order ID</th>
+                <th style="padding: 12px 15px;">Client Email</th>
+                <th style="padding: 12px 15px;">Amount</th>
+                <th style="padding: 12px 15px;">Payment ID</th>
+                <th style="padding: 12px 15px;">Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr>
+                <td>{{ log['order_id'] }}</td>
+                 
+                   <td>{{log['email']}}</td>
+                  <td>{{ log['amount'] }}</td>
+       
+                <td>{{ log['payment_id'] }}</td>
+                <td>{{ log['payment_time'] }}</td>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

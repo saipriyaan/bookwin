@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sales Rep Signup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: auto;
+            margin: auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            margin-top: 10px;
+            font-weight: bold;
+            display: block;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            border-color: #68edff;
+            outline: none;
+        }
+
+        button {
+            background-color: #68edff;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #55b7d4;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .login-link a {
+            color: #68edff;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Sales Representative Signup</h2>
+        <form action="{{ url_for('sales_rep_signup') }}" method="POST">
+            <label for="name">Name:</label>
+            <input type="text" name="name" required>
+            
+            <label for="email">Email:</label>
+            <input type="email" name="email" required>
+     
+            <label for="phone">Phone Number:</label>
+            <input type="number" name="phone" required>
+            <label for="name">Payment Information(Paypal or others to receive commission):</label>
+            <input type="text" name="com" required >
+                   
+            <label for="password">Password:</label>
+            <input type="password" name="password" required>
+            
+            <button type="submit">Sign Up</button>
+        </form>
+
+        <div class="login-link">
+            <p>Already have an account? <a href="{{ url_for('sales_rep_login') }}">Login In</a></p>
+        </div>
+    </div>
+</body>
+</html>
+{% endblock %}

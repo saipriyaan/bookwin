@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earn $25 per Sale</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f4f4f4;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        header {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(45deg, #6A82FB, #FC5C7D);
+            color: #fff;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .scroll-icon {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.5rem;
+            color: white;
+            animation: bounce 1.5s infinite;
+        }
+
+        .circle-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10vh;
+      
+            position: relative;
+        }
+
+        .step {
+            opacity: 0;
+            transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+            transform: translateY(50px); /* Start below the viewport */
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+        }
+
+        .step.visible {
+            opacity: 1;
+            transform: translateY(0); /* Slide into place */
+        }
+
+        .circle {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(45deg, #FFD194, #70e1f5);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            color: white;
+            margin: 20px auto;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .cta {
+            padding: 10px 20px;
+            background-color: #FC5C7D;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cta:hover {
+            background-color: #6A82FB;
+        }
+
+        /* Animations */
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @media (min-width: 768px) {
+            header h1 {
+                font-size: 4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div>
+        <h1>Earn $25 per Sale</h1>
+        <p>Follow these steps to earn by sharing!</p>
+    </div>
+    <div class="scroll-icon">▼ Scroll Down</div>
+</header>
+
+<section class="circle-container">
+    <div class="step" id="step1">
+        <div class="circle">1</div>
+        <h2>Sign Up</h2>
+        <p>Create an account to get started.</p>
+      <a href="/sales_rep_signup">  <button class="cta">Sign Up</button></a>
+    </div>
+
+    <div class="step" id="step2">
+        <div class="circle">2</div>
+        <h2>Login</h2>
+        <p>Log in to access your dashboard.</p>
+      <a href="/sales_rep_login">  <button class="cta">Login</button></a>
+    </div>
+
+    <div class="step" id="step3">
+        <div class="circle">3</div>
+        <h2>Get Code</h2>
+        <p>Share your referral code with friends.</p>
+       <a href="/sales_rep_dashboard"> <button class="cta">Get Code</button></a>
+    </div>
+
+    <div class="step" id="step4">
+        <div class="circle">4</div>
+        <h2>Earn Money</h2>
+        <p>Earn $25 when a client buys a photo!</p>
+        <a href="/sales_rep_dashboard"> <button class="cta">Earn Now</button></a>
+    </div>
+</section>
+
+<script>
+    // Detect when each step is in view
+    const steps = document.querySelectorAll('.step');
+
+    function revealSteps() {
+        const triggerBottom = window.innerHeight / 5 * 4;
+
+        steps.forEach(step => {
+            const stepTop = step.getBoundingClientRect().top;
+
+            if (stepTop < triggerBottom) {
+                step.classList.add('visible');
+            }
+        });
+    }
+
+    window.addEventListener('scroll', revealSteps);
+    revealSteps(); // Call on page load to check visibility
+</script>
+
+</body>
+</html>
