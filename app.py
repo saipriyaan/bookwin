@@ -65,6 +65,10 @@ def index():
 def guide():
     client_logged_in = current_user.is_authenticated  # Check if user is logged in
     return render_template('gui.html', client_logged_in=client_logged_in)
+@app.route('/bookg')
+def bookg():
+    client_logged_in = current_user.is_authenticated  # Check if user is logged in
+    return render_template('bookg.html', client_logged_in=client_logged_in)
 
 @app.route('/broker_form', methods=['GET', 'POST'])
 def broker_form():
@@ -836,19 +840,19 @@ def display_image(order_id, image_type):
 
 import paypalrestsdk
 
-# paypalrestsdk.configure({
-#     "mode": "sandbox",  # Change to "live" for production
-#     "client_id": "ASj-Xf_9xqfLfOg6tZywOl6lcta9dceYoiy51-yRaAF0ceyX-d4c8Sd5LTcQ_YKkQjwxNco4NmK176Nu",
-#     "client_secret": "EMtkLyRrkibEjQs3MEAYF7n22eon45Oqn9V6NCI7JmJ3eRAX4sA5I5DqSXsmuGCBPLcPVpU6JT5qUcgZ"
-# })
-
-
 paypalrestsdk.configure({
-    "mode": "live",  # Change to "live" for production
-    "client_id": "AcqD8TXVqVin_YoXJiC_h7O1_vldBycYnIopIsersWz_RZX9X3TpUytPP-fEtCv9c5UAM0j6or0YZkpl",
-    "client_secret": "EGs-EylBXYPUMn7xDFF4W12g_R4YeHmDcsXP6ZIloI4cR3YI2GqT5W_VKHdm59MVRtdsuaMrvlE9fb13"
-
+    "mode": "sandbox",  # Change to "live" for production
+    "client_id": "ASj-Xf_9xqfLfOg6tZywOl6lcta9dceYoiy51-yRaAF0ceyX-d4c8Sd5LTcQ_YKkQjwxNco4NmK176Nu",
+    "client_secret": "EMtkLyRrkibEjQs3MEAYF7n22eon45Oqn9V6NCI7JmJ3eRAX4sA5I5DqSXsmuGCBPLcPVpU6JT5qUcgZ"
 })
+
+
+# paypalrestsdk.configure({
+#     "mode": "live",  # Change to "live" for production
+#     "client_id": "AcqD8TXVqVin_YoXJiC_h7O1_vldBycYnIopIsersWz_RZX9X3TpUytPP-fEtCv9c5UAM0j6or0YZkpl",
+#     "client_secret": "EGs-EylBXYPUMn7xDFF4W12g_R4YeHmDcsXP6ZIloI4cR3YI2GqT5W_VKHdm59MVRtdsuaMrvlE9fb13"
+
+# })
 
 @app.route('/pay/<order_id>', methods=['GET'])
 @login_required
@@ -976,7 +980,7 @@ def paymentbook_success():
         })
             sales_rep_col.update_one(
         {'rep_code': sale},
-        {'$inc': {'balance': 5}}
+        {'$inc': {'balance': 6}}
     )
 
         # Redirect to view the book
