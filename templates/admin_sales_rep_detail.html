@@ -7,8 +7,9 @@
     <h2>Details for {{ sales_rep['name'] }}</h2>
     <p><strong>Rep Code:</strong> {{ sales_rep['rep_code'] }}</p>
     <p><strong>Rep Code:</strong> {{ sales_rep['com'] }}</p>
-    <p><strong>Balance:</strong> ${{ sales_rep['ph'] }}</p>
+    <p><strong>Phone:</strong> {{ sales_rep['phone'] }}</p>
     <p><strong>Balance:</strong> ${{ sales_rep['balance'] }}</p>
+    <p><strong>Email:</strong> {{ sales_rep['email'] }}</p>
 
     <h3>Adjust Balance</h3>
     <form method="POST">

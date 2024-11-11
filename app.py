@@ -836,6 +836,13 @@ def display_image(order_id, image_type):
 
 import paypalrestsdk
 
+# paypalrestsdk.configure({
+#     "mode": "sandbox",  # Change to "live" for production
+#     "client_id": "ASj-Xf_9xqfLfOg6tZywOl6lcta9dceYoiy51-yRaAF0ceyX-d4c8Sd5LTcQ_YKkQjwxNco4NmK176Nu",
+#     "client_secret": "EMtkLyRrkibEjQs3MEAYF7n22eon45Oqn9V6NCI7JmJ3eRAX4sA5I5DqSXsmuGCBPLcPVpU6JT5qUcgZ"
+# })
+
+
 paypalrestsdk.configure({
     "mode": "live",  # Change to "live" for production
     "client_id": "AcqD8TXVqVin_YoXJiC_h7O1_vldBycYnIopIsersWz_RZX9X3TpUytPP-fEtCv9c5UAM0j6or0YZkpl",
@@ -968,7 +975,7 @@ def paymentbook_success():
 
         })
             sales_rep_col.update_one(
-        {'_id': sale},
+        {'rep_code': sale},
         {'$inc': {'balance': 5}}
     )
 
