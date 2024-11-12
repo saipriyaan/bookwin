@@ -313,7 +313,7 @@ def purchase_boo():
                     }]
                 },
                 "amount": {
-                    "total": "23.00",
+                    "total": "30.00",
                     "currency": "USD"
                 },
                 "description": "Purchase of PDF book."
