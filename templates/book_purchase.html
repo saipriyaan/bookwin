@@ -54,13 +54,14 @@
         <div class="email-body">
             <p>Dear {{ user['username'] }},</p>
             <p>Thank you for your purchase! Your payment was successful, and you can access your book using the link below:</p>
-            <p><a href="{{ url_for('view_book', unique_link=book_link, _external=True) }}" class="button-link">View Your Book</a></p>
+            <p><a href="https://book.parentsdenschool.com/purchase" class="button-link">View Your Book</a></p>
             
             <h3>Payment Details:</h3>
             <p><strong>PayPal Payment ID:</strong> {{ payment.id }}</p>
             <p><strong>Amount Paid:</strong> {{ payment.transactions[0].amount.total }} {{ payment.transactions[0].amount.currency }}</p>
             <p><strong>Payment Date:</strong> {{ timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</p>
-            <p><strong>Book Link:</strong> <a href="{{ url_for('view_book', unique_link=book_link, _external=True) }}">{{ book_link }}</a></p>
+            <p><strong>Book ID:</strong> {{ book_link }}</p>
+            <P>To view your book please click <a href="https://book.parentsdenschool.com/purchase">here</a></P>
 
        
         </div>
