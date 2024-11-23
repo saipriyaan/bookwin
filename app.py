@@ -954,10 +954,7 @@ def paymentbook_success():
         
 
 
-        admin_email = 'dreamphotostudioai@gmail.com'
-        msg_admin = Message(email_subject, recipients=[admin_email], sender='dreamphotostudioai@gmail.com')
-        msg_admin.html = email_html
-        mail.send(msg_admin)
+
         sale=session.get('broker_id')
         print(sale)
         
