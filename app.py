@@ -435,7 +435,7 @@ def admin_facilitator_dashboard():
         flash('Access denied.', 'danger')
         return redirect(url_for('index'))
     orders = orders_collection.find()
-    return render_template('admin_facilitator_dashboard.html', orders=orders)
+    return redirect(url_for('admin_sales_reps'))
 
 import googleapiclient.discovery
 from googleapiclient.http import MediaIoBaseUpload
