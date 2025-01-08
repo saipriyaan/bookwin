@@ -6,8 +6,7 @@
         /* General Styles */
         body {
             font-family: 'Arial', sans-serif;
-            background-image: "den.png";
-
+            background-color: #f8f9fa;
         }
 
         h2, h3 {
@@ -65,7 +64,7 @@
             transform: translateY(0);
         }
 
-        /* Individual Image Slider */
+        /* Image Slider */
         .slider {
             position: relative;
             max-width: 100%;
@@ -82,11 +81,14 @@
 
         .slide {
             min-width: 100%;
+            max-height: auto;
             transition: opacity 1s ease-in-out;
         }
 
         .slide img {
             width: 100%;
+            height: 600px; /* Ensures uniform height for all images */
+            object-fit: cover; /* Maintains aspect ratio while fitting the container */
             display: block;
         }
 
@@ -133,71 +135,59 @@
         .active-dot {
             background-color: #717171;
         }
-        
 
-        
+        /* Book Image Styling */
+        .book-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 400px;
+            width: 100%;
+            background-color: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
 
+        .book-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            animation: fadeIn 1.5s forwards ease-in-out;
+        }
 
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
 
-        /* Style for the book container */
-.book-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 400px; /* Set a height for the container */
-    width: 100%;
-    background-color: #f0f0f0; /* Background for loading state */
-    position: relative;
-    overflow: hidden;
-}
+        .book-container::before {
+            content: 'Loading...';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 18px;
+            color: #777;
+            opacity: 1;
+            animation: fadeOut 1.5s forwards ease-in-out;
+        }
 
-/* Book image styling */
-.book-image {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: cover; /* Ensures the image fits nicely */
-    opacity: 0; /* Image starts invisible */
-    animation: fadeIn 1.5s forwards ease-in-out; /* Smooth fade-in effect */
-}
-
-/* Keyframe for fade-in effect */
-@keyframes fadeIn {
-    to {
-        opacity: 1;
-    }
-}
-
-/* Optional: you can add a background for a placeholder effect */
-.book-container::before {
-    content: 'Loading...'; /* Placeholder text */
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 18px;
-    color: #777;
-    opacity: 1;
-    animation: fadeOut 1.5s forwards ease-in-out; /* Fades out as the image fades in */
-}
-
-/* Keyframe for fading out the placeholder */
-@keyframes fadeOut {
-    to {
-        opacity: 0;
-    }
-}
-
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+            }
+        }
     </style>
 
     <h2>The Parents' Den - Parent and Child Workshop</h2>
     <br>
- <div class="book-container">
-    <img src="{{ url_for('static', filename='denparen.jpg') }}" alt="Book Image" class="book-image" loading="lazy" />
-</div>
-
+    <div class="book-container">
+        <img src="{{ url_for('static', filename='denparen.jpg') }}" alt="Book Image" class="book-image" loading="lazy" />
+    </div>
 
     <p class="scroll-animation">
-
         <h2>INTRODUCTION</h2>
         <br>
         The Parents' Den is a character-building and reinforcing book of values. My purpose for recording this random selection of useful values and positive thoughts is to help inspire, stimulate, and guide readers in ways that might help them and future generations.
