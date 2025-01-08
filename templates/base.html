@@ -197,7 +197,7 @@
         {% if current_user.is_authenticated %}
             {% if current_user.role != 'client' %}
   
-                <a href="{{ url_for('booksale') }}">Parentden (Sale)</a>
+                <a href="{{ url_for('booksale') }}">Parentdens' (Sale)</a>
                 <a href="{{ url_for('admin_sales_reps') }}">Sales Rep</a>
     
             {% endif %}
@@ -206,7 +206,7 @@
 
             {% endif %}
 
-            <a href="{{ url_for('purchase_boo') }}">ParentDen Book</a>
+            <a href="{{ url_for('purchase_boo') }}">Parents' Den Book</a>
         {% endif %}
     </nav>
 
