@@ -973,7 +973,7 @@ def paymentbook_success():
         })
             sales_rep_col.update_one(
         {'rep_code': sale},
-        {'$inc': {'balance': 6}}
+        {'$inc': {'balance': 5}}
     )
 
         # Redirect to view the book
